@@ -23,34 +23,42 @@
             margin: 0;
             line-height: 1.6;
             overflow-x: hidden;
+            -webkit-text-size-adjust: 100%; /* Safari文字サイズ自動調整防止 */
         }
 
         section {
             min-height: 100vh;
+            /* Safariでの高さ不具合対策 */
+            min-height: -webkit-fill-available;
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 6rem 10%;
+            padding: 8rem 10%;
             border-bottom: 1px solid rgba(212, 175, 55, 0.1);
             background: var(--bg-gradient);
             position: relative;
+            box-sizing: border-box;
         }
 
         .title-huge {
             font-family: 'Montserrat', sans-serif;
-            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-size: 4rem; /* 予備設定 */
+            font-size: clamp(3rem, 8vw, 6rem);
             line-height: 1.1;
             font-weight: 800;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.05);
+            /* Safari用プレフィックス */
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
             border-left: 8px solid var(--accent-gold);
             padding: 3rem;
-            backdrop-filter: blur(10px);
             border-radius: 0 1.5rem 1.5rem 0;
             margin-top: 2rem;
+            display: block; /* レイアウト崩れ防止 */
         }
 
         .danger-card {
@@ -58,15 +66,15 @@
             border: 3px solid var(--accent-red);
             padding: 3rem;
             border-radius: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        .text-huge { font-size: 2.5rem; font-weight: 700; line-height: 1.4; }
+        .text-huge { font-size: 2.5rem; font-weight: 700; line-height: 1.4; margin-bottom: 1rem; }
         .text-large { font-size: 1.85rem; line-height: 1.6; }
         
         .accent-gold { color: var(--accent-gold); }
         .accent-red { color: var(--accent-red); }
 
-        /* Scroll Progress Bar */
         #progress-bar {
             position: fixed;
             top: 0;
@@ -75,26 +83,48 @@
             height: 8px;
             background: var(--accent-gold);
             z-index: 1000;
-            transition: width 0.1s ease;
         }
 
-        /* Animations on Scroll */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
-            transition: all 1s ease-out;
+            transition: all 0.8s ease-out;
         }
         .reveal.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
+        /* Safariでも確実に隙間を作るための設定 */
+        .grid-custom {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+        @media (min-width: 1024px) {
+            .grid-custom {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        ul { list-style: none; padding: 0; }
         ul li {
             font-size: 1.85rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-left: 3rem;
+            position: relative;
+        }
+        ul li::before {
+            content: '\f058'; /* FontAwesome check-circle */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+        }
+        .li-danger::before {
+            content: '\f06a'; /* exclamation-circle */
+            color: var(--accent-red);
         }
 
         .icon-bg {
@@ -111,27 +141,25 @@
 
     <div id="progress-bar"></div>
 
-    <!-- SECTION 1: HERO -->
-    <section id="s1">
+    <section>
         <div class="reveal">
             <h2 class="text-3xl mb-6 accent-gold font-bold tracking-[0.3em]">106年の看板が燃える音</h2>
             <h1 class="title-huge mb-10 text-white">THE REBIRTH<br>OF <span class="accent-gold">TANAKA KAME</span></h1>
-            <p class="text-4xl text-gray-400 font-bold leading-tight">
+            <p class="text-3xl md:text-4xl text-gray-400 font-bold leading-tight">
                 沈黙の危機を突破し、<br>
                 「最強の組織」へ再起動する提言
             </p>
         </div>
     </section>
 
-    <!-- SECTION 2: FACT -->
-    <section id="s2">
+    <section>
         <div class="reveal">
-            <h2 class="text-5xl font-bold mb-12 border-b-4 border-red-500 pb-6">事実：市場からの「最後通牒」</h2>
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 border-b-4 border-red-500 pb-6">事実：市場からの「最後通牒」</h2>
+            <div class="grid-custom">
                 <div class="space-y-10">
                     <div class="danger-card">
-                        <h3 class="text-6xl font-black accent-red mb-4">量産品キャンセル</h3>
-                        <p class="text-3xl leading-relaxed">
+                        <h3 class="text-5xl font-black accent-red mb-4">量産品キャンセル</h3>
+                        <p class="text-2xl md:text-3xl leading-relaxed">
                             不具合発覚からの取引停止。<br>
                             数億円規模の損失の可能性。
                         </p>
@@ -142,121 +170,116 @@
                         <span class="text-white">市場から「拒絶」された歴史的な瞬間です。</span>
                     </p>
                 </div>
-                <div class="card border-red-500 bg-red-900/10">
-                    <p class="text-3xl text-red-400 mb-8 font-bold">【発生した不具合】</p>
-                    <ul class="text-2xl space-y-4">
-                        <li><i class="fa-solid fa-circle-exclamation mt-2"></i> 配管内へのあり得ないレベルの異物混入</li>
-                        <li><i class="fa-solid fa-circle-exclamation mt-2"></i> シリンダー接続部への養生テープ挟み込み</li>
-                        <li><i class="fa-solid fa-circle-exclamation mt-2"></i> 規定値に達していないボルトの締め付け</li>
+                <div class="card" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                    <p class="text-2xl text-red-400 mb-8 font-bold">【発生した不具合】</p>
+                    <ul>
+                        <li class="li-danger">配管内へのあり得ないレベルの異物混入</li>
+                        <li class="li-danger">シリンダー接続部への養生テープ挟み込み</li>
+                        <li class="li-danger">規定値に達していないボルトの締め付け</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 3: TEMPERATURE GAP -->
-    <section id="s3">
+    <section>
         <div class="reveal">
-            <h2 class="text-5xl font-bold mb-16 accent-gold">致命的な「温度差」</h2>
-            <div class="grid lg:grid-cols-2 gap-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold">致命的な「温度差」</h2>
+            <div class="grid-custom">
                 <div class="space-y-8">
-                    <h3 class="text-4xl font-bold text-white border-l-8 border-red-500 pl-6">経営陣の危機感</h3>
-                    <div class="p-10 bg-red-900/30 rounded-xl text-3xl italic leading-relaxed">
+                    <h3 class="text-3xl font-bold text-white border-l-8 border-red-500 pl-6">経営陣の危機感</h3>
+                    <div class="p-10 bg-red-900/30 rounded-xl text-2xl md:text-3xl italic leading-relaxed">
                         「このままでは会社が倒産する」<br>
                         「信頼をどう取り戻すのか」<br>
                         「このピンチをチャンスに変えろ」
                     </div>
                 </div>
                 <div class="space-y-8">
-                    <h3 class="text-4xl font-bold text-gray-400 border-l-8 border-gray-600 pl-6">現場の空気</h3>
-                    <div class="p-10 bg-gray-800/50 rounded-xl text-3xl text-gray-400 italic leading-relaxed">
+                    <h3 class="text-3xl font-bold text-gray-400 border-l-8 border-gray-600 pl-6">現場の空気</h3>
+                    <div class="p-10 bg-gray-800/50 rounded-xl text-2xl md:text-3xl text-gray-400 italic leading-relaxed">
                         「今日も忙しいな」<br>
                         「いつも通りやっている」<br>
                         「新人がやったことだから仕方ない」
                     </div>
                 </div>
             </div>
-            <p class="mt-24 text-huge text-center accent-red tracking-widest">
+            <p class="mt-24 text-3xl md:text-4xl text-center accent-red font-bold tracking-widest">
                 現場は、明日も「同じミス」を繰り返す準備ができています。
             </p>
         </div>
     </section>
 
-    <!-- SECTION 4: THE CURSE -->
-    <section id="s4">
+    <section>
         <div class="reveal text-center max-w-6xl mx-auto">
-            <h2 class="text-5xl font-bold mb-16">呪いの言葉：<span class="accent-red">「忙しかったから」</span></h2>
+            <h2 class="text-4xl md:text-5xl font-bold mb-16">呪いの言葉：<span class="accent-red">「忙しかったから」</span></h2>
             <p class="text-huge mb-16">
                 「忙しい」という言葉は、<br>
                 <span class="text-white">思考停止のサインであり、品質への白旗です。</span>
             </p>
-            <div class="card text-left p-12">
-                <p class="text-3xl leading-relaxed">
+            <div class="card text-left p-12" style="border-radius: 1.5rem;">
+                <p class="text-2xl md:text-3xl leading-relaxed">
                     忙しいからミスをしたのではない。<br>
                     <span class="accent-gold font-bold">「忙しくなると機能しなくなるほど、仕組みが脆弱だった」</span><br>
                     これが今回突きつけられた、残酷な本質です。
                 </p>
             </div>
-            <p class="text-4xl text-red-500 font-bold mt-16">
+            <p class="text-3xl md:text-4xl text-red-500 font-bold mt-16">
                 この言葉を放置すれば、来週また、同じ不具合が起きます。
             </p>
         </div>
     </section>
 
-    <!-- SECTION 5: NEW 106 YEARS -->
-    <section id="s5">
+    <section>
         <div class="reveal">
-            <h2 class="text-5xl font-bold mb-16 text-center">「運任せ」の品質管理からの脱却</h2>
-            <div class="grid lg:grid-cols-2 gap-20">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center">「運任せ」の品質管理からの脱却</h2>
+            <div class="grid-custom">
                 <div class="space-y-10">
-                    <h3 class="text-4xl font-bold accent-red border-b-2 border-red-500 pb-4">これまでの106年（属人化）</h3>
-                    <ul class="text-2xl">
-                        <li><i class="fa-solid fa-xmark accent-red mt-2"></i> 職人の「良心」と「頑張り」に依存</li>
-                        <li><i class="fa-solid fa-xmark accent-red mt-2"></i> 見えない場所は「多分大丈夫」で出荷</li>
-                        <li><i class="fa-solid fa-xmark accent-red mt-2"></i> ミスは「個人の不注意」として片付け</li>
+                    <h3 class="text-3xl font-bold accent-red border-b-2 border-red-500 pb-4">これまでの106年（属人化）</h3>
+                    <ul>
+                        <li class="li-danger">職人の「良心」と「頑張り」に依存</li>
+                        <li class="li-danger">見えない場所は「多分大丈夫」で出荷</li>
+                        <li class="li-danger">ミスは「個人の不注意」として片付け</li>
                     </ul>
                 </div>
                 <div class="space-y-10">
-                    <h3 class="text-4xl font-bold text-green-400 border-b-2 border-green-400 pb-4">これからの106年（システム化）</h3>
-                    <ul class="text-2xl">
-                        <li><i class="fa-solid fa-check text-green-400 mt-2"></i> 人間を疑い、「仕組み」を絶対視する</li>
-                        <li><i class="fa-solid fa-check text-green-400 mt-2"></i> 全ての工程に「デジタルな証拠」を残す</li>
-                        <li><i class="fa-solid fa-check text-green-400 mt-2"></i> 忙しさを言い訳にできない物理的制約</li>
+                    <h3 class="text-3xl font-bold text-green-400 border-b-2 border-green-400 pb-4">これからの106年（システム化）</h3>
+                    <ul>
+                        <li>人間を疑い、「仕組み」を絶対視する</li>
+                        <li>全ての工程に「デジタルな証拠」を残す</li>
+                        <li>忙しさを言い訳にできない物理的制約</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 6: CASE INTRO -->
-    <section id="s6">
+    <section>
         <div class="reveal text-center max-w-6xl mx-auto">
-            <h2 class="text-7xl font-black mb-12 accent-gold italic">逆境を「再起動」に<br>変えた先人たち</h2>
+            <h2 class="text-5xl md:text-7xl font-black mb-12 accent-gold italic">逆境を「再起動」に<br>変えた先人たち</h2>
             <hr class="w-48 mx-auto border-t-8 border-gold mb-16">
-            <p class="text-4xl text-gray-400 leading-relaxed">
+            <p class="text-3xl md:text-4xl text-gray-400 leading-relaxed">
                 絶望的な不祥事から、以前より強固な組織に生まれ変わった企業には、<br>
                 共通する「思想的決断」があります。
             </p>
         </div>
     </section>
 
-    <!-- SECTION 7: TOYOTA -->
-    <section id="s7">
+    <section>
         <div class="reveal">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="grid-custom items-center">
                 <div>
-                    <h3 class="text-8xl font-black mb-8">TOYOTA</h3>
-                    <h4 class="text-4xl accent-gold mb-10 font-bold">「成長の歪み」を認める勇気</h4>
-                    <div class="space-y-8">
-                        <p class="text-red-400 font-bold text-2xl">【危機の正体】</p>
-                        <p class="text-2xl text-gray-300">台数拡大が人材育成を追い越し、現場のキャパシティが崩壊。</p>
-                        <p class="text-gold font-bold text-2xl mt-8">【思想の転換】</p>
-                        <p class="text-3xl font-bold">「止める勇気」のシステム化。</p>
-                        <p class="text-2xl text-gray-400">異常があれば、新人でもラインを止めていい「アンドン」を徹底。忙しさに流されない仕組みへ回帰。</p>
+                    <h3 class="text-7xl md:text-8xl font-black mb-8">TOYOTA</h3>
+                    <h4 class="text-3xl accent-gold mb-10 font-bold">「成長の歪み」を認める勇気</h4>
+                    <div class="space-y-6">
+                        <p class="text-red-400 font-bold text-xl md:text-2xl">【危機の正体】</p>
+                        <p class="text-xl md:text-2xl text-gray-300">台数拡大が人材育成を追い越し、現場のキャパシティが崩壊。</p>
+                        <p class="text-gold font-bold text-xl md:text-2xl mt-8">【思想の転換】</p>
+                        <p class="text-2xl md:text-3xl font-bold">「止める勇気」のシステム化。</p>
+                        <p class="text-xl md:text-2xl text-gray-400">異常があれば、新人でもラインを止めていい「アンドン」を徹底。忙しさに流されない仕組みへ回帰。</p>
                     </div>
                 </div>
                 <div class="card p-16">
-                    <p class="text-4xl italic font-bold">
+                    <p class="text-3xl md:text-4xl italic font-bold">
                         「忙しいからと流すのではなく、不備があれば物理的に止まる仕組みこそが、最強の効率を生む。」
                     </p>
                 </div>
@@ -265,39 +288,37 @@
         </div>
     </section>
 
-    <!-- SECTION 8: TANAKA KAME x TOYOTA -->
-    <section id="s8">
+    <section>
         <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：トヨタ篇</h2>
-            <div class="card border-l-[12px] border-red-500 bg-red-900/10 p-20">
-                <p class="text-huge leading-loose">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：トヨタ篇</h2>
+            <div class="card border-l-[12px] border-red-500 bg-red-900/10 p-16 md:p-20">
+                <p class="text-3xl md:text-huge leading-loose">
                     「忙しかった」という言い訳を許すのは、<br>
                     組織が現場から<span class="accent-red">「止める勇気」を奪っている</span>からです。<br><br>
                     必要なのは精神論ではなく、<br>
-                    <span class="text-white text-5xl font-bold">不備があれば工程が物理的に止まる</span><br>
+                    <span class="text-white text-4xl md:text-5xl font-bold">不備があれば工程が物理的に止まる</span><br>
                     冷徹な仕組みへの回帰です。
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 9: J&J -->
-    <section id="s9">
+    <section>
         <div class="reveal">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="grid-custom items-center">
                 <div>
-                    <h3 class="text-8xl font-black mb-8">J&J</h3>
-                    <h4 class="text-4xl accent-gold mb-10 font-bold">「損」を「究極の広告」に変える</h4>
-                    <div class="space-y-8">
-                        <p class="text-red-400 font-bold text-2xl">【危機の正体】</p>
-                        <p class="text-2xl text-gray-300">毒物混入事件。会社の存続か、顧客の安全か。</p>
-                        <p class="text-gold font-bold text-2xl mt-8">【思想の転換】</p>
-                        <p class="text-3xl font-bold">「全品回収と情報の全公開」。</p>
-                        <p class="text-2xl text-gray-400">数千億円の損失を出しながら、全米に「私たちは絶対に嘘をつかない」と証明した。</p>
+                    <h3 class="text-7xl md:text-8xl font-black mb-8">J&J</h3>
+                    <h4 class="text-3xl accent-gold mb-10 font-bold">「損」を「究極の広告」に変える</h4>
+                    <div class="space-y-6">
+                        <p class="text-red-400 font-bold text-xl md:text-2xl">【危機の正体】</p>
+                        <p class="text-xl md:text-2xl text-gray-300">毒物混入事件。会社の存続か、顧客の安全か。</p>
+                        <p class="text-gold font-bold text-xl md:text-2xl mt-8">【思想の転換】</p>
+                        <p class="text-2xl md:text-3xl font-bold">「全品回収と情報の全公開」。</p>
+                        <p class="text-xl md:text-2xl text-gray-400">数千億円の損失を出しながら、全米に「私たちは絶対に嘘をつかない」と証明した。</p>
                     </div>
                 </div>
-                <div class="card border-blue-500 p-16">
-                    <p class="text-4xl italic font-bold text-blue-300">
+                <div class="card p-16" style="border-color: #3b82f6;">
+                    <p class="text-3xl md:text-4xl italic font-bold text-blue-300">
                         「隠蔽はブランドを殺すが、自己犠牲を伴う誠実さは、競合が一生追いつけない信頼を作る。」
                     </p>
                 </div>
@@ -306,39 +327,37 @@
         </div>
     </section>
 
-    <!-- SECTION 10: TANAKA KAME x J&J -->
-    <section id="s10">
+    <section>
         <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：J&J篇</h2>
-            <div class="card p-20">
-                <p class="text-huge leading-loose">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：J&J篇</h2>
+            <div class="card p-16 md:p-20">
+                <p class="text-3xl md:text-huge leading-loose">
                     今回の不具合を「隠すべき損失」と見るか、<br>
                     <span class="accent-gold">「誠実さを売るための舞台」</span>と見るか。<br><br>
                     「最悪の事態」を「最高のPR」に書き換える、<br>
-                    <span class="text-white text-5xl font-bold">ナラティブ（物語）の力</span>が必要です。<br>
+                    <span class="text-white text-4xl md:text-5xl font-bold">ナラティブ（物語）の力</span>が必要です。<br>
                     この反省を、ブランドの武器に変えます。
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 11: KOMATSU -->
-    <section id="s11">
+    <section>
         <div class="reveal">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="grid-custom items-center">
                 <div>
-                    <h3 class="text-8xl font-black mb-8">KOMATSU</h3>
-                    <h4 class="text-4xl accent-gold mb-10 font-bold">「見えないもの」を「価値」に変える</h4>
-                    <div class="space-y-8">
-                        <p class="text-red-400 font-bold text-2xl">【危機の正体】</p>
-                        <p class="text-2xl text-gray-300">品質低下と、顧客の「現場」が見えない不安。</p>
-                        <p class="text-gold font-bold text-2xl mt-8">【思想の転換】</p>
-                        <p class="text-3xl font-bold">「KOMTRAX」による可視化。</p>
-                        <p class="text-2xl text-gray-400">全機体に通信機を載せ、稼働状況を可視化。機械屋から「サービス業」へ進化し世界を席巻。</p>
+                    <h3 class="text-7xl md:text-8xl font-black mb-8">KOMATSU</h3>
+                    <h4 class="text-3xl accent-gold mb-10 font-bold">「見えないもの」を「価値」に変える</h4>
+                    <div class="space-y-6">
+                        <p class="text-red-400 font-bold text-xl md:text-2xl">【危機の正体】</p>
+                        <p class="text-xl md:text-2xl text-gray-300">品質低下と、顧客の「現場」が見えない不安。</p>
+                        <p class="text-gold font-bold text-xl md:text-2xl mt-8">【思想の転換】</p>
+                        <p class="text-2xl md:text-3xl font-bold">「KOMTRAX」による可視化。</p>
+                        <p class="text-xl md:text-2xl text-gray-400">全機体に通信機を載せ、稼働状況を可視化。機械屋から「サービス業」へ進化し世界を席巻。</p>
                     </div>
                 </div>
-                <div class="card border-yellow-600 p-16">
-                    <p class="text-4xl italic font-bold text-yellow-500">
+                <div class="card p-16" style="border-color: #ca8a04;">
+                    <p class="text-3xl md:text-4xl italic font-bold text-yellow-500">
                         「見えない場所で起きていることを可視化すれば、不具合は『解決すべきデータ』に変わる。」
                     </p>
                 </div>
@@ -347,14 +366,13 @@
         </div>
     </section>
 
-    <!-- SECTION 12: TANAKA KAME x KOMATSU -->
-    <section id="s12">
+    <section>
         <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：コマツ篇</h2>
-            <div class="card border-l-[12px] border-yellow-500 bg-yellow-900/10 p-20">
-                <p class="text-huge leading-loose">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：コマツ篇</h2>
+            <div class="card border-l-[12px] border-yellow-500 bg-yellow-900/10 p-16 md:p-20">
+                <p class="text-3xl md:text-huge leading-loose">
                     「出張中で見れない」「現場が何をしているか分からない」<br>
-                    そんな盲点を、<span class="accent-gold text-5xl font-bold">デジタルで強制的に可視化</span>する。<br><br>
+                    そんな盲点を、<span class="accent-gold text-4xl md:text-5xl font-bold">デジタルで強制的に可視化</span>する。<br><br>
                     単に直すだけではない。<br>
                     <span class="text-white">「稼働率を保証する品質管理」</span>へと進化し、<br>
                     106年の誇りを、圧倒的な信頼へ再構築します。
@@ -363,78 +381,71 @@
         </div>
     </section>
 
-    <!-- SECTION 13: ASSET STRATEGY -->
-    <section id="s13">
+    <section>
         <div class="reveal max-w-7xl mx-auto">
-            <h2 class="text-5xl font-bold mb-16 accent-gold text-center">失敗を「最強の資産」へ</h2>
-            <div class="grid lg:grid-cols-2 gap-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">失敗を「最強の資産」へ</h2>
+            <div class="grid-custom">
                 <div class="card">
                     <div class="flex items-center gap-6 mb-8">
                         <i class="fa-solid fa-book-open text-5xl accent-gold"></i>
-                        <h3 class="text-4xl font-bold">不具合情報の資産化</h3>
+                        <h3 class="text-3xl md:text-4xl font-bold">不具合情報の資産化</h3>
                     </div>
-                    <p class="text-2xl leading-relaxed">今回のミス、原因、改善プロセスを全て記録。これは将来、同じ悩みに苦しむ企業向けの**「品質コンサル事業」の最強の教材**になります。</p>
+                    <p class="text-xl md:text-2xl leading-relaxed">今回のミス、原因、改善プロセスを全て記録。これは将来、同じ悩みに苦しむ企業向けの**「品質コンサル事業」の最強の教材**になります。</p>
                 </div>
                 <div class="card">
                     <div class="flex items-center gap-6 mb-8">
                         <i class="fa-solid fa-shield-halved text-5xl accent-gold"></i>
-                        <h3 class="text-4xl font-bold">エビデンスによる信頼</h3>
+                        <h3 class="text-3xl md:text-4xl font-bold">エビデンスによる信頼</h3>
                     </div>
-                    <p class="text-2xl leading-relaxed">「気をつけます」ではなく「証拠があります」で戦う。全ての機体に工程写真を添えて納品。**「タナカカメなら安心だ」という物理的証拠**を売りにします。</p>
+                    <p class="text-xl md:text-2xl leading-relaxed">「気をつけます」ではなく「証拠があります」で戦う。全ての機体に工程写真を添えて納品。**「タナカカメなら安心だ」という物理的証拠**を売りにします。</p>
                 </div>
             </div>
-            <p class="mt-24 text-5xl font-black text-center accent-gold italic underline decoration-white underline-offset-8">
+            <p class="mt-24 text-4xl md:text-5xl font-black text-center accent-gold italic underline decoration-white underline-offset-8">
                 「地獄を見たからこそ、誰よりも品質に詳しい」
             </p>
         </div>
     </section>
 
-    <!-- SECTION 14: PROPOSAL -->
-    <section id="s14">
+    <section>
         <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-5xl font-bold mb-16">提言：タナカカメに「外の目」を</h2>
-            <p class="text-4xl mb-16">私たちが今やるべきは、内側だけで反省することではありません。</p>
-            <div class="p-16 border-[8px] border-gold bg-gold/5 rounded-3xl shadow-2xl">
-                <h3 class="text-5xl font-bold mb-12 italic leading-tight accent-gold">「世界が認める品質管理」の成功事例を徹底的にリサーチし、<br>タナカカメに適合させる覚悟があるか？</h3>
-                <ul class="text-3xl space-y-8">
-                    <li><i class="fa-solid fa-circle-chevron-right accent-gold text-4xl mt-1"></i> 「忙しさ」を封じ込めるワークフローの構築</li>
-                    <li><i class="fa-solid fa-circle-chevron-right accent-gold text-4xl mt-1"></i> 現場の慢心を不可能にするデジタル監視の導入</li>
-                    <li><i class="fa-solid fa-circle-chevron-right accent-gold text-4xl mt-1"></i> 失敗を「価値ある物語」に変える広報戦略</li>
+            <h2 class="text-4xl md:text-5xl font-bold mb-16">提言：タナカカメに「外の目」を</h2>
+            <p class="text-3xl md:text-4xl mb-16">私たちが今やるべきは、内側だけで反省することではありません。</p>
+            <div class="p-10 md:p-16 border-[8px] border-gold bg-gold/5 rounded-3xl shadow-2xl">
+                <h3 class="text-4xl md:text-5xl font-bold mb-12 italic leading-tight accent-gold">「世界が認める品質管理」の成功事例を徹底的にリサーチし、<br>タナカカメに適合させる覚悟があるか？</h3>
+                <ul class="text-2xl md:text-3xl space-y-8">
+                    <li>「忙しさ」を封じ込めるワークフローの構築</li>
+                    <li>現場の慢心を不可能にするデジタル監視の導入</li>
+                    <li>失敗を「価値ある物語」に変える広報戦略</li>
                 </ul>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 15: FINAL CALL -->
-    <section id="s15">
+    <section id="final">
         <div class="reveal text-center max-w-6xl mx-auto space-y-16">
-            <h2 class="text-4xl accent-gold font-bold tracking-[0.6em]">106年目の創業を、今。</h2>
+            <h2 class="text-3xl md:text-4xl accent-gold font-bold tracking-[0.6em]">106年目の創業を、今。</h2>
             <h1 class="title-huge text-white">I WILL LEAD THE<br><span class="accent-gold">TRANSFORMATION.</span></h1>
-            <div class="card border-gold p-16">
-                <p class="text-4xl font-bold leading-relaxed">
+            <div class="card p-12 md:p-16" style="border-color: #d4af37;">
+                <p class="text-3xl md:text-4xl font-bold leading-relaxed">
                     「このピンチをチャンスにしたい」という社長の言葉。<br>
                     私は本気で受け止めています。<br>
                     そのための「解」を、私が探しに行きます。
                 </p>
             </div>
-            <p class="text-6xl font-black accent-gold tracking-wider">私に、そのリードを任せていただけませんか？</p>
+            <p class="text-4xl md:text-6xl font-black accent-gold tracking-wider">私に、そのリードを任せていただけませんか？</p>
         </div>
     </section>
 
-    <!-- Footer / Bottom Spacing -->
     <footer class="py-20 text-center bg-black/50 text-gray-500 text-xl">
         &copy; 106th Anniversary Tanaka Kame REBIRTH Project
     </footer>
 
     <script>
-        // Progress Bar logic
         window.addEventListener('scroll', () => {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             document.getElementById('progress-bar').style.width = scrolled + "%";
-            
-            // Reveal on scroll logic
             reveal();
         });
 
@@ -443,14 +454,12 @@
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 150;
+                var elementVisible = 100;
                 if (elementTop < windowHeight - elementVisible) {
                     reveals[i].classList.add("visible");
                 }
             }
         }
-
-        // Run once on load
         window.onload = reveal;
     </script>
 </body>
