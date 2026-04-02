@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タナカカメ：101年目の再創業</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Montserrat:wght@800&display=swap');
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            display: none;
+            padding: 4rem;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .accent-red { color: #ef4444; }
+        .accent-gold { color: #d4af37; }
+        
+        .title-huge {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 5rem;
+            line-height: 1;
+            font-weight: 800;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #d4af37;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-nav {
+            position: fixed;
+            bottom: 2rem;
+            z-index: 50;
+            background: rgba(212, 175, 55, 0.2);
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #d4af37;
+            border-radius: 9999px;
+            transition: all 0.3s;
+        }
+
+        .btn-nav:hover {
+            background: rgba(212, 175, 55, 0.4);
+        }
+
+        .page-indicator {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            color: rgba(212, 175, 55, 0.5);
+        }
+
+        .danger-border {
+            border: 2px solid #ef4444;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.8s ease-out forwards; }
+    </style>
+</head>
+<body>
+
+    <div class="page-indicator" id="indicator">01 / 15</div>
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide active" id="slide-1">
+        <div class="animate-fade">
+            <h2 class="text-2xl mb-4 accent-gold font-bold">100年の看板が燃える音</h2>
+            <h1 class="title-huge mb-6 text-white">THE REBIRTH<br>OF <span class="accent-gold">TANAKA KAME</span></h1>
+            <p class="text-3xl text-gray-400">沈黙の危機を突破し、「最強の組織」へ再起動する提言</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: FACT -->
+    <div class="slide" id="slide-2">
+        <h2 class="text-4xl font-bold mb-12 border-b-2 border-red-500 pb-4">事実：市場からの「最後通牒」</h2>
+        <div class="grid grid-cols-2 gap-12 items-center">
+            <div class="space-y-8">
+                <div class="card bg-red-900/20">
+                    <h3 class="text-5xl font-black accent-red mb-2">10機キャンセル</h3>
+                    <p class="text-xl">「ダイドー電気」様との取引停止。数億円の損失。</p>
+                </div>
+                <p class="text-2xl leading-relaxed">
+                    これは単なる「納品遅延」や「初期不良」ではありません。<br>
+                    タナカカメというブランドが、<br>
+                    <span class="text-white font-bold">市場から「拒絶」された歴史的な瞬間です。</span>
+                </p>
+            </div>
+            <div class="danger-border">
+                <p class="text-xl text-red-400 mb-4 font-bold">【発生した不具合】</p>
+                <ul class="list-disc list-inside space-y-2 text-lg">
+                    <li>配管内へのあり得ない量の異物混入</li>
+                    <li>シリンダー部への養生テープ挟み込み（剥がし忘れ）</li>
+                    <li>規定トルク未達のボルト締め付け（形式的なマーク）</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: GAP -->
+    <div class="slide" id="slide-3">
+        <h2 class="text-4xl font-bold mb-12 accent-gold">致命的な「温度差」</h2>
+        <div class="grid grid-cols-2 gap-20">
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-white">経営陣の危機感</h3>
+                <div class="p-6 bg-red-900/30 rounded">
+                    「このままでは会社が倒産する」<br>
+                    「信頼をどう取り戻すのか」<br>
+                    「チャンスに変えてほしい」
+                </div>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-gray-400">現場の空気</h3>
+                <div class="p-6 bg-gray-800/50 rounded text-gray-400">
+                    「今日も忙しいな」<br>
+                    「いつも通りやっているだけ」<br>
+                    「新人がやったことだから…」
+                </div>
+            </div>
+        </div>
+        <p class="mt-20 text-4xl text-center font-black accent-red italic">
+            現場は、明日も「同じミス」を繰り返す準備ができています。
+        </p>
+    </div>
+
+    <!-- SLIDE 4: THE CURSE OF "BUSY" -->
+    <div class="slide" id="slide-4">
+        <h2 class="text-4xl font-bold mb-12">呪いの言葉：<span class="accent-red">「忙しかったから」</span></h2>
+        <div class="flex flex-col items-center justify-center">
+            <div class="text-center space-y-8 max-w-4xl">
+                <p class="text-3xl leading-relaxed">
+                    「忙しい」という言葉は、<br>
+                    <span class="text-white font-bold">思考停止のサインであり、品質への白旗です。</span>
+                </p>
+                <div class="card text-left">
+                    <p class="text-xl">
+                        忙しいからミスをしたのではない。<br>
+                        <span class="accent-gold font-bold">「忙しくなると機能しなくなるほど、仕組みが脆弱だった」</span><br>
+                        これが今回突きつけられた、残酷な本質です。
+                    </p>
+                </div>
+                <p class="text-2xl text-red-500 font-bold">
+                    この言葉を放置すれば、来週また、同じ不具合が起きます。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: LUCK VS SYSTEM -->
+    <div class="slide" id="slide-5">
+        <h2 class="text-4xl font-bold mb-12">「運任せ」の品質管理</h2>
+        <div class="grid grid-cols-2 gap-12">
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold accent-gold">これまでの100年</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-xmark accent-red mt-1"></i> 職人の「良心」と「頑張り」に依存</li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-xmark accent-red mt-1"></i> 見えない場所は「多分大丈夫」で出荷</li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-xmark accent-red mt-1"></i> ミスは「個人の不注意」として片付け</li>
+                </ul>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-green-400">これからの100年</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-400 mt-1"></i> 人間を疑い、「仕組み」を絶対視する</li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-400 mt-1"></i> 全ての工程に「デジタルな証拠」を残す</li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-400 mt-1"></i> 「忙しさ」を言い訳にできない物理的制約</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: CASE INTRO -->
+    <div class="slide" id="slide-6">
+        <div class="text-center">
+            <h2 class="text-5xl font-black mb-8 accent-gold italic">逆境を「再起動」に変えた先人たち</h2>
+            <hr class="w-24 mx-auto border-t-4 border-gold mb-12">
+            <p class="text-2xl text-gray-400 max-w-3xl mx-auto">
+                絶望的な不祥事から、以前より強固な組織に生まれ変わった企業には、<br>
+                共通する「思想的決断」があります。
+            </p>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: CASE 1: TOYOTA -->
+    <div class="slide" id="slide-7">
+        <div class="grid grid-cols-2 gap-12 h-full items-center">
+            <div>
+                <h3 class="text-6xl font-black mb-6">TOYOTA</h3>
+                <h4 class="text-2xl accent-gold mb-8">「成長の歪み」を認める勇気</h4>
+                <div class="space-y-4">
+                    <p class="text-red-400 font-bold underline">危機の正体：</p>
+                    <p>台数拡大（成長）が人材育成を追い越し、現場がキャパ超え。</p>
+                    <p class="text-gold font-bold underline mt-4">思想の転換：</p>
+                    <p class="text-xl font-bold">「止める勇気」のシステム化。</p>
+                    <p class="text-gray-400">異常があれば、新人でもラインを止めていい「アンドン」の権限を徹底。忙しさに流されない仕組みへ回帰した。</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 p-8 rounded-xl">
+                <i class="fa-solid fa-industry text-8xl mb-6 opacity-20"></i>
+                <p class="text-2xl italic leading-relaxed">
+                    「忙しいからと流すのではなく、不備があれば物理的に止まる仕組みこそが、最強の効率を生む。」
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: TANAKA KAME x TOYOTA -->
+    <div class="slide" id="slide-8">
+        <h2 class="text-4xl font-bold mb-12 accent-gold text-center">タナカカメへの示唆：トヨタ篇</h2>
+        <div class="flex justify-center">
+            <div class="card max-w-4xl border-l-8 border-red-500 bg-red-900/10">
+                <p class="text-3xl leading-relaxed">
+                    「忙しかった」という言い訳を許すのは、<br>
+                    組織が現場から<span class="accent-red font-bold">「止める勇気」を奪っている</span>からです。<br><br>
+                    必要なのは精神論ではなく、<br>
+                    <span class="text-white font-bold text-4xl">不備があれば工程が物理的に止まる</span><br>
+                    冷徹な仕組みへの回帰です。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: CASE 2: J&J -->
+    <div class="slide" id="slide-9">
+        <div class="grid grid-cols-2 gap-12 h-full items-center">
+            <div>
+                <h3 class="text-6xl font-black mb-6">J&J</h3>
+                <h4 class="text-2xl accent-gold mb-8">「損」を「究極の広告」に変える</h4>
+                <div class="space-y-4">
+                    <p class="text-red-400 font-bold underline">危機の正体：</p>
+                    <p>毒物混入事件。会社の存続か、顧客の安全か。</p>
+                    <p class="text-gold font-bold underline mt-4">思想の転換：</p>
+                    <p class="text-xl font-bold">「全品回収と情報の全公開」。</p>
+                    <p class="text-gray-400">1億ドル以上の損失を出しながら、全米に「私たちは絶対に嘘をつかない」と証明した。</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 p-8 rounded-xl border-l-4 border-blue-500">
+                <i class="fa-solid fa-briefcase-medical text-8xl mb-6 opacity-20"></i>
+                <p class="text-2xl italic leading-relaxed text-blue-300">
+                    「隠蔽はブランドを殺すが、自己犠牲を伴う誠実さは、競合が一生追いつけない信頼を作る。」
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: TANAKA KAME x J&J -->
+    <div class="slide" id="slide-10">
+        <h2 class="text-4xl font-bold mb-12 accent-gold text-center">タナカカメへの示唆：J&J篇</h2>
+        <div class="flex justify-center">
+            <div class="card max-w-4xl">
+                <p class="text-3xl leading-relaxed">
+                    今回の不具合を「隠すべき損失」と見るか、<br>
+                    <span class="accent-gold font-bold">「誠実さを売るための舞台」</span>と見るか。<br><br>
+                    「最悪の事態」を「最高のPR」に書き換える、<br>
+                    <span class="text-white font-bold text-4xl">ナラティブ（物語）の力</span>が必要です。<br>
+                    この反省を、ブランドの武器に変えます。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 11: CASE 3: KOMATSU -->
+    <div class="slide" id="slide-11">
+        <div class="grid grid-cols-2 gap-12 h-full items-center">
+            <div>
+                <h3 class="text-6xl font-black mb-6">KOMATSU</h3>
+                <h4 class="text-2xl accent-gold mb-8">「見えないもの」を「価値」に変える</h4>
+                <div class="space-y-4">
+                    <p class="text-red-400 font-bold underline">危機の正体：</p>
+                    <p>品質低下と、顧客の「現場」が見えない不安。</p>
+                    <p class="text-gold font-bold underline mt-4">思想の転換：</p>
+                    <p class="text-xl font-bold">「KOMTRAX（コムトラックス）」導入。</p>
+                    <p class="text-gray-400">全ての機械に通信機を載せ、稼働状況を可視化。機械屋から「サービス業」へ進化。</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 p-8 rounded-xl border-l-4 border-yellow-600">
+                <i class="fa-solid fa-satellite text-8xl mb-6 opacity-20"></i>
+                <p class="text-2xl italic leading-relaxed text-yellow-500">
+                    「見えない場所で起きていることを可視化すれば、不具合は『解決すべきデータ』に変わる。」
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 12: TANAKA KAME x KOMATSU -->
+    <div class="slide" id="slide-12">
+        <h2 class="text-4xl font-bold mb-12 accent-gold text-center">タナカカメへの示唆：コマツ篇</h2>
+        <div class="flex justify-center">
+            <div class="card max-w-4xl border-l-8 border-yellow-500 bg-yellow-900/10">
+                <p class="text-3xl leading-relaxed">
+                    「出張中で見れない」「現場が何をしているか分からない」<br>
+                    そんな盲点を、<span class="accent-gold font-bold text-4xl">デジタルで強制的に可視化</span>する。<br><br>
+                    単に直すだけではない。<br>
+                    <span class="text-white font-bold">「稼働率を保証する品質管理」</span>へと進化し、<br>
+                    業界2位への返り咲きを狙います。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 13: ASSET STRATEGY -->
+    <div class="slide" id="slide-13">
+        <h2 class="text-4xl font-bold mb-12 accent-gold">失敗を「最強の資産」へ</h2>
+        <div class="grid grid-cols-2 gap-12">
+            <div class="card">
+                <h3 class="text-2xl font-bold mb-4">不具合情報の全公開</h3>
+                <p>今回のミス、その原因、そして再発防止のプロセスを全てコンテンツ化。これは将来、同じ悩みに苦しむ企業向けの**「品質コンサル事業」の種本**になります。</p>
+            </div>
+            <div class="card">
+                <h3 class="text-2xl font-bold mb-4">エビデンスによる信頼回復</h3>
+                <p>「気をつけます」ではなく「撮影しました」で戦う。全ての機体に、全工程の合格写真を添えて納品。**「タナカカメなら安心だ」という物理的証拠**を提示します。</p>
+            </div>
+        </div>
+        <p class="mt-12 text-3xl font-black text-center accent-gold">「地獄を見たからこそ、誰よりも品質に詳しい」</p>
+    </div>
+
+    <!-- SLIDE 14: THE PROPOSAL -->
+    <div class="slide" id="slide-14">
+        <h2 class="text-4xl font-bold mb-12">提言：タナカカメに「外の目」を</h2>
+        <div class="space-y-8 max-w-5xl">
+            <p class="text-2xl">私たちが今やるべきは、内側だけで反省することではありません。</p>
+            <div class="p-8 border-4 border-gold bg-gold/5">
+                <h3 class="text-3xl font-bold mb-6 italic">「世界が認める品質管理」の成功事例を徹底的にリサーチし、<br>タナカカメに適合させる覚悟があるか？</h3>
+                <ul class="space-y-2 text-xl text-gray-300">
+                    <li>・「忙しさ」を封じ込めるワークフローの構築</li>
+                    <li>・現場の隠蔽を不可能にするデジタル監視</li>
+                    <li>・失敗を「価値ある物語」に変える広報戦略</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 15: FINAL CALL -->
+    <div class="slide" id="slide-15">
+        <div class="text-center space-y-12 animate-fade">
+            <h2 class="text-3xl accent-gold font-bold">101年目の創業を、今。</h2>
+            <h1 class="title-huge text-white">I WILL LEAD THE<br><span class="accent-gold">TRANSFORMATION.</span></h1>
+            <div class="max-w-2xl mx-auto p-6 card">
+                <p class="text-2xl">
+                    「このピンチをチャンスにしたい」という社長の言葉。<br>
+                    私は本気で受け止めています。<br>
+                    そのための「解」を、私が探しに行きます。
+                </p>
+            </div>
+            <p class="text-5xl font-black accent-gold mt-12 underline decoration-red-500 underline-offset-8">私に、そのリードを任せていただけませんか？</p>
+        </div>
+    </div>
+
+    <!-- NAV BUTTONS -->
+    <div class="flex gap-4 fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+        <button class="btn-nav" onclick="prevSlide()"><i class="fa-solid fa-chevron-left mr-2"></i> 前へ</button>
+        <button class="btn-nav" onclick="nextSlide()">次へ <i class="fa-solid fa-chevron-right ml-2"></i></button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 15;
+
+        function updateSlide() {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById(`slide-${currentSlide}`).classList.add('active');
+            document.getElementById('indicator').innerText = `${String(currentSlide).padStart(2, '0')} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
