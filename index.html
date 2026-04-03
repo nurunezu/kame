@@ -23,12 +23,11 @@
             margin: 0;
             line-height: 1.6;
             overflow-x: hidden;
-            -webkit-text-size-adjust: 100%; /* Safari文字サイズ自動調整防止 */
+            -webkit-text-size-adjust: 100%;
         }
 
         section {
             min-height: 100vh;
-            /* Safariでの高さ不具合対策 */
             min-height: -webkit-fill-available;
             width: 100%;
             display: flex;
@@ -43,7 +42,6 @@
 
         .title-huge {
             font-family: 'Montserrat', sans-serif;
-            font-size: 4rem; /* 予備設定 */
             font-size: clamp(3rem, 8vw, 6rem);
             line-height: 1.1;
             font-weight: 800;
@@ -51,14 +49,13 @@
 
         .card {
             background: rgba(255, 255, 255, 0.05);
-            /* Safari用プレフィックス */
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-left: 8px solid var(--accent-gold);
             padding: 3rem;
             border-radius: 0 1.5rem 1.5rem 0;
             margin-top: 2rem;
-            display: block; /* レイアウト崩れ防止 */
+            display: block;
         }
 
         .danger-card {
@@ -70,7 +67,6 @@
         }
 
         .text-huge { font-size: 2.5rem; font-weight: 700; line-height: 1.4; margin-bottom: 1rem; }
-        .text-large { font-size: 1.85rem; line-height: 1.6; }
         
         .accent-gold { color: var(--accent-gold); }
         .accent-red { color: var(--accent-red); }
@@ -95,7 +91,6 @@
             transform: translateY(0);
         }
 
-        /* Safariでも確実に隙間を作るための設定 */
         .grid-custom {
             display: grid;
             grid-template-columns: 1fr;
@@ -115,7 +110,7 @@
             position: relative;
         }
         ul li::before {
-            content: '\f058'; /* FontAwesome check-circle */
+            content: '\f058';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             position: absolute;
@@ -123,7 +118,7 @@
             color: var(--accent-gold);
         }
         .li-danger::before {
-            content: '\f06a'; /* exclamation-circle */
+            content: '\f06a';
             color: var(--accent-red);
         }
 
@@ -135,12 +130,19 @@
             opacity: 0.05;
             pointer-events: none;
         }
+
+        .case-detail {
+            font-size: 1.5rem;
+            color: #cbd5e1;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
 
     <div id="progress-bar"></div>
 
+    <!-- 1: HERO -->
     <section>
         <div class="reveal">
             <h2 class="text-3xl mb-6 accent-gold font-bold tracking-[0.3em]">106年の看板が燃える音</h2>
@@ -152,6 +154,7 @@
         </div>
     </section>
 
+    <!-- 2: FACT -->
     <section>
         <div class="reveal">
             <h2 class="text-4xl md:text-5xl font-bold mb-12 border-b-4 border-red-500 pb-6">事実：市場からの「最後通牒」</h2>
@@ -182,6 +185,7 @@
         </div>
     </section>
 
+    <!-- 3: GAP -->
     <section>
         <div class="reveal">
             <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold">致命的な「温度差」</h2>
@@ -209,6 +213,7 @@
         </div>
     </section>
 
+    <!-- 4: THE CURSE -->
     <section>
         <div class="reveal text-center max-w-6xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-bold mb-16">呪いの言葉：<span class="accent-red">「忙しかったから」</span></h2>
@@ -229,6 +234,7 @@
         </div>
     </section>
 
+    <!-- 5: NEW 106 YEARS -->
     <section>
         <div class="reveal">
             <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center">「運任せ」の品質管理からの脱却</h2>
@@ -253,6 +259,7 @@
         </div>
     </section>
 
+    <!-- 6: CASE INTRO -->
     <section>
         <div class="reveal text-center max-w-6xl mx-auto">
             <h2 class="text-5xl md:text-7xl font-black mb-12 accent-gold italic">逆境を「再起動」に<br>変えた先人たち</h2>
@@ -264,18 +271,19 @@
         </div>
     </section>
 
+    <!-- 7: TOYOTA (Detailed) -->
     <section>
         <div class="reveal">
             <div class="grid-custom items-center">
                 <div>
                     <h3 class="text-7xl md:text-8xl font-black mb-8">TOYOTA</h3>
-                    <h4 class="text-3xl accent-gold mb-10 font-bold">「成長の歪み」を認める勇気</h4>
+                    <h4 class="text-3xl accent-gold mb-10 font-bold">2010年：大規模リコール危機</h4>
                     <div class="space-y-6">
-                        <p class="text-red-400 font-bold text-xl md:text-2xl">【危機の正体】</p>
-                        <p class="text-xl md:text-2xl text-gray-300">台数拡大が人材育成を追い越し、現場のキャパシティが崩壊。</p>
-                        <p class="text-gold font-bold text-xl md:text-2xl mt-8">【思想の転換】</p>
-                        <p class="text-2xl md:text-3xl font-bold">「止める勇気」のシステム化。</p>
-                        <p class="text-xl md:text-2xl text-gray-400">異常があれば、新人でもラインを止めていい「アンドン」を徹底。忙しさに流されない仕組みへ回帰。</p>
+                        <p class="text-red-400 font-bold text-2xl">【何が起きたのか】</p>
+                        <p class="case-detail">アクセルペダルの不具合やフロアマットの干渉により、意図せぬ加速が発生。全世界で850万台を超える大規模リコールに発展。豊田章男社長（当時）が米公聴会で涙ながらに証言する事態となった。</p>
+                        <p class="text-gold font-bold text-2xl mt-8">【抜本的改善：アンドンの思想】</p>
+                        <p class="text-2xl md:text-3xl font-bold">「止める勇気」の再定義</p>
+                        <p class="case-detail">「台数拡大（量）」が「人材育成（質）」を追い越したことを認め、グローバル品質特別委員会を新設。異常があれば<span class="text-white font-bold">「新入社員でもラインを止めていい」</span>アンドンの権限を再徹底。忙しさを理由にした「流し」を物理的に不可能にするシステムへ回帰した。</p>
                     </div>
                 </div>
                 <div class="card p-16">
@@ -288,6 +296,7 @@
         </div>
     </section>
 
+    <!-- 8: TANAKA KAME x TOYOTA -->
     <section>
         <div class="reveal max-w-6xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：トヨタ篇</h2>
@@ -303,18 +312,19 @@
         </div>
     </section>
 
+    <!-- 9: J&J (Detailed) -->
     <section>
         <div class="reveal">
             <div class="grid-custom items-center">
                 <div>
                     <h3 class="text-7xl md:text-8xl font-black mb-8">J&J</h3>
-                    <h4 class="text-3xl accent-gold mb-10 font-bold">「損」を「究極の広告」に変える</h4>
+                    <h4 class="text-3xl accent-gold mb-10 font-bold">100億円を捨てた「誠実さ」</h4>
                     <div class="space-y-6">
-                        <p class="text-red-400 font-bold text-xl md:text-2xl">【危機の正体】</p>
-                        <p class="text-xl md:text-2xl text-gray-300">毒物混入事件。会社の存続か、顧客の安全か。</p>
-                        <p class="text-gold font-bold text-xl md:text-2xl mt-8">【思想の転換】</p>
-                        <p class="text-2xl md:text-3xl font-bold">「全品回収と情報の全公開」。</p>
-                        <p class="text-xl md:text-2xl text-gray-400">数千億円の損失を出しながら、全米に「私たちは絶対に嘘をつかない」と証明した。</p>
+                        <p class="text-red-400 font-bold text-2xl">【何が起きたのか】</p>
+                        <p class="case-detail">1982年、主力製品のタイレノールに毒物が混入され、シカゴで7人が死亡。市場シェアは37%から7%へ急落。会社の存続すら危ぶまれる絶望的な状況に陥った。</p>
+                        <p class="text-gold font-bold text-2xl mt-8">【抜本的改善：我が信条】</p>
+                        <p class="text-2xl md:text-3xl font-bold">利益より「信条」を優先</p>
+                        <p class="case-detail">経営陣は弁護士の「責任を限定せよ」という助言を無視。約1億ドルをかけて3100万本の製品を全米から回収。さらに業界初となる<span class="text-white font-bold">「三重密閉の不正開封防止パッケージ」</span>を開発し、世界基準へと押し上げた。この「自己犠牲を伴う公開」が、事件前を上回る信頼を勝ち取った。</p>
                     </div>
                 </div>
                 <div class="card p-16" style="border-color: #3b82f6;">
@@ -327,6 +337,7 @@
         </div>
     </section>
 
+    <!-- 10: TANAKA KAME x J&J -->
     <section>
         <div class="reveal max-w-6xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：J&J篇</h2>
@@ -342,18 +353,19 @@
         </div>
     </section>
 
+    <!-- 11: KOMATSU (Detailed) -->
     <section>
         <div class="reveal">
             <div class="grid-custom items-center">
                 <div>
                     <h3 class="text-7xl md:text-8xl font-black mb-8">KOMATSU</h3>
-                    <h4 class="text-3xl accent-gold mb-10 font-bold">「見えないもの」を「価値」に変える</h4>
+                    <h4 class="text-4xl accent-gold mb-10 font-bold">機械を「監視」するイノベーション</h4>
                     <div class="space-y-6">
-                        <p class="text-red-400 font-bold text-xl md:text-2xl">【危機の正体】</p>
-                        <p class="text-xl md:text-2xl text-gray-300">品質低下と、顧客の「現場」が見えない不安。</p>
-                        <p class="text-gold font-bold text-xl md:text-2xl mt-8">【思想の転換】</p>
-                        <p class="text-2xl md:text-3xl font-bold">「KOMTRAX」による可視化。</p>
-                        <p class="text-xl md:text-2xl text-gray-400">全機体に通信機を載せ、稼働状況を可視化。機械屋から「サービス業」へ進化し世界を席巻。</p>
+                        <p class="text-red-400 font-bold text-2xl">【何が起きたのか】</p>
+                        <p class="case-detail">90年代、激しい価格競争と品質問題に直面。特に「過酷な現場でなぜ壊れるのか」がブラックボックス化しており、場当たり的な修理が繰り返され、顧客の信頼を失っていた。</p>
+                        <p class="text-gold font-bold text-2xl mt-8">【抜本的改善：KOMTRAX】</p>
+                        <p class="text-2xl md:text-3xl font-bold">「見えない」を「可視化」へ</p>
+                        <p class="case-detail">全機体にGPSとセンサーを標準搭載。燃料、稼働時間、負荷を24時間監視し、不具合の兆候を<span class="text-white font-bold">「壊れる前に察知」</span>する予兆管理を実現。「機械を売る」ビジネスから「止まらない現場を売る」サービス業へとモデル自体を転換し、世界シェア2位の地位を不動のものにした。</p>
                     </div>
                 </div>
                 <div class="card p-16" style="border-color: #ca8a04;">
@@ -366,6 +378,7 @@
         </div>
     </section>
 
+    <!-- 12: TANAKA KAME x KOMATSU -->
     <section>
         <div class="reveal max-w-6xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">タナカカメへの示唆：コマツ篇</h2>
@@ -381,6 +394,7 @@
         </div>
     </section>
 
+    <!-- 13: ASSET STRATEGY -->
     <section>
         <div class="reveal max-w-7xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-bold mb-16 accent-gold text-center">失敗を「最強の資産」へ</h2>
@@ -406,6 +420,7 @@
         </div>
     </section>
 
+    <!-- 14: PROPOSAL -->
     <section>
         <div class="reveal max-w-6xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-bold mb-16">提言：タナカカメに「外の目」を</h2>
@@ -421,6 +436,7 @@
         </div>
     </section>
 
+    <!-- 15: FINAL CALL -->
     <section id="final">
         <div class="reveal text-center max-w-6xl mx-auto space-y-16">
             <h2 class="text-3xl md:text-4xl accent-gold font-bold tracking-[0.6em]">106年目の創業を、今。</h2>
@@ -445,7 +461,8 @@
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
-            document.getElementById('progress-bar').style.width = scrolled + "%";
+            const pb = document.getElementById('progress-bar');
+            if(pb) pb.style.width = scrolled + "%";
             reveal();
         });
 
