@@ -39,7 +39,6 @@
             background: var(--bg-gradient);
             position: relative;
             box-sizing: border-box;
-            overflow: hidden;
         }
         @media (min-width: 768px) {
             section { padding: 6rem 8%; }
@@ -185,57 +184,6 @@
         @media (min-width: 768px) {
             .signature { margin-top: 4rem; letter-spacing: 0.2em; font-size: 1.5rem; }
         }
-
-        /* ヒーロー画像装飾用 */
-        .hero-img-container {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            max-width: 200px;
-            margin: 0 auto 2rem auto;
-        }
-        @media (min-width: 1024px) {
-            .hero-img-container {
-                max-width: 400px;
-                margin: 0 0 0 auto;
-            }
-        }
-        .hero-img-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120%;
-            height: 120%;
-            background: radial-gradient(circle, rgba(212,175,55,0.3) 0%, transparent 70%);
-            filter: blur(20px);
-            z-index: 0;
-            border-radius: 50%;
-        }
-        .hero-img {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            border-radius: 1rem;
-            border: 2px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-            object-fit: cover;
-        }
-        
-        /* 最後の背景透かし用 */
-        .watermark-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150vw;
-            height: 150vh;
-            object-fit: cover;
-            opacity: 0.04;
-            pointer-events: none;
-            z-index: 0;
-            filter: grayscale(100%) contrast(120%);
-        }
     </style>
 </head>
 <body>
@@ -244,23 +192,13 @@
 
     <!-- 1: HERO -->
     <section>
-        <div class="reveal max-w-7xl mx-auto w-full">
-            <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-                <div class="order-2 lg:order-1 text-center lg:text-left">
-                    <h2 class="text-xl md:text-2xl lg:text-3xl mb-4 md:mb-6 accent-gold font-bold tracking-[0.2em] md:tracking-[0.3em]">106年の看板が燃える音</h2>
-                    <h1 class="title-huge mb-6 md:mb-10 text-white">THE REBIRTH<br>OF <span class="accent-gold">TANAKA KAME</span></h1>
-                    <p class="text-xl md:text-3xl lg:text-4xl text-gray-400 font-bold leading-tight">
-                        沈黙の危機を突破し、<br class="hidden md:block">
-                        「最強の組織」へ再起動する提言
-                    </p>
-                </div>
-                <div class="order-1 lg:order-2 flex justify-center lg:justify-end">
-                    <div class="hero-img-container">
-                        <div class="hero-img-glow"></div>
-                        <img src="IMG_2684.jpg" alt="タナカカメ" class="hero-img" onerror="this.style.display='none'">
-                    </div>
-                </div>
-            </div>
+        <div class="reveal">
+            <h2 class="text-xl md:text-2xl lg:text-3xl mb-4 md:mb-6 accent-gold font-bold tracking-[0.2em] md:tracking-[0.3em]">106年の看板が燃える音</h2>
+            <h1 class="title-huge mb-6 md:mb-10 text-white">THE REBIRTH<br>OF <span class="accent-gold">TANAKA KAME</span></h1>
+            <p class="text-xl md:text-3xl lg:text-4xl text-gray-400 font-bold leading-tight">
+                沈黙の危機を突破し、<br class="hidden md:block">
+                「最強の組織」へ再起動する提言
+            </p>
         </div>
     </section>
 
@@ -548,9 +486,7 @@
 
     <!-- 15: FINAL CALL -->
     <section id="final">
-        <img src="IMG_2684.jpg" class="watermark-bg" alt="" onerror="this.style.display='none'">
-        
-        <div class="reveal text-center max-w-6xl mx-auto space-y-10 md:space-y-16 relative z-10">
+        <div class="reveal text-center max-w-6xl mx-auto space-y-10 md:space-y-16">
             <h2 class="text-xl md:text-3xl lg:text-4xl accent-gold font-bold tracking-[0.3em] md:tracking-[0.6em]">106年目の創業を、今。</h2>
             <h1 class="title-huge text-white">I WILL LEAD THE<br><span class="accent-gold">TRANSFORMATION.</span></h1>
             
@@ -600,7 +536,7 @@
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 50; 
+                var elementVisible = 50; // スマホでの発火タイミングを少し早める
                 if (elementTop < windowHeight - elementVisible) {
                     reveals[i].classList.add("visible");
                 }
