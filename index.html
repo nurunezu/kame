@@ -2,107 +2,324 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>工程逆算スケジューラー（社内用）</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converge - Press Scheduler</title>
     <style>
-        body { font-family: "Segoe UI", Meiryo, sans-serif; line-height: 1.4; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; background-color: #f4f7f9; }
-        h1 { border-bottom: 2px solid #005eb8; color: #005eb8; padding-bottom: 10px; font-size: 1.5em; }
-        .container { display: flex; gap: 20px; flex-wrap: wrap; }
-        .panel { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 380px; }
-        .input-group { margin-bottom: 10px; padding: 8px; border: 1px solid #eee; border-radius: 4px; }
-        .buffer-group { background-color: #fff4e6; border-color: #ffd8a8; }
-        h3 { margin-top: 0; color: #005eb8; font-size: 1em; border-left: 4px solid #005eb8; padding-left: 10px; margin-bottom: 10px; }
-        label { display: block; font-weight: bold; font-size: 0.8em; color: #555; }
-        input, button { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #005eb8; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; transition: 0.2s; }
-        button:hover { background-color: #00458a; }
-        .copy-btn { background-color: #28a745; margin-top: 10px; }
-        .copy-btn:hover { background-color: #218838; }
-        
-        .calendar-container { margin-top: 20px; background: white; padding: 15px; border-radius: 8px; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-        .month { border: 1px solid #eee; padding: 5px; font-size: 0.75em; }
-        .month-name { text-align: center; font-weight: bold; background: #eee; }
-        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
-        .day { padding: 3px 0; cursor: pointer; border-radius: 2px; }
-        .holiday { background-color: #ffcccc !important; color: #cc0000; font-weight: bold; }
-        .sun { color: red; } .sat { color: blue; }
+        :root {
+            --bg-color: #fcfcfc;
+            --sidebar-bg: #ffffff;
+            --primary-black: #000000;
+            --border-color: #e5e5e5;
+            --text-main: #333333;
+            --text-sub: #999999;
+            --accent-green: #28a745;
+        }
 
-        #results { margin-top: 15px; padding: 10px; background: #e9f7ef; border-left: 5px solid #28a745; display: none; }
-        .result-item { margin-bottom: 8px; font-size: 0.9em; border-bottom: 1px solid #c8e6c9; }
-        .date-val { font-weight: bold; color: #2e7d32; font-size: 1.1em; }
-        .text-summary { width: 100%; height: 80px; font-size: 0.8em; margin-top: 10px; padding: 5px; border: 1px solid #ccc; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+        }
+
+        /* サイドバー */
+        .sidebar {
+            width: 200px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .logo-sub {
+            font-size: 10px;
+            color: var(--text-sub);
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .nav-item.active {
+            color: var(--primary-black);
+            border-left: 2px solid var(--primary-black);
+            padding-left: 10px;
+            margin-left: -12px;
+        }
+
+        /* メインコンテンツ */
+        .main-content {
+            flex: 1;
+            padding: 60px 80px;
+            overflow-y: auto;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .header-sub {
+            font-size: 14px;
+            color: var(--text-sub);
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        /* 入力カード */
+        .converter-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .input-group label {
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .input-group input {
+            width: 100%;
+            font-size: 32px;
+            border: none;
+            border-bottom: 1px solid transparent;
+            outline: none;
+            padding: 5px 0;
+        }
+        .input-group input:focus {
+            border-bottom: 1px solid var(--primary-black);
+        }
+
+        .buffer-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .buffer-input {
+            background: #f9f9f9;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* ボタン */
+        .primary-btn {
+            background: var(--primary-black);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        /* 結果リスト */
+        .recent-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .recent-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .result-row {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid transparent;
+        }
+        .result-row.active {
+            border-left-color: var(--primary-black);
+        }
+        .result-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .result-date {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 休日設定カレンダー */
+        .calendar-view {
+            display: none; /* 初期は非表示 */
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .month { background: white; border: 1px solid var(--border-color); padding: 10px; font-size: 12px;}
+        .month-name { text-align: center; font-weight: bold; margin-bottom: 10px;}
+        .days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+        .day { padding: 5px 0; cursor: pointer; border-radius: 2px;}
+        .day.holiday { background: #fee2e2; color: #dc2626; font-weight: bold;}
+        .day.sun { color: #dc2626; } .day.sat { color: #2563eb; }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<h1>工程逆算スケジューラー</h1>
-
-<div class="container">
-    <div class="panel">
-        <h3>1. 条件入力</h3>
-        <label>立会日程 (最終日)</label>
-        <input type="date" id="deadline">
-
-        <label>組立 総工数 (h)</label>
-        <input type="number" id="buildHours" value="1920">
-
-        <label>試運転 総工数 (h)</label>
-        <input type="number" id="testHours" value="280">
-
-        <label>電気工事 日数 (稼働日)</label>
-        <input type="number" id="elecDays" value="1">
-
-        <label>組立 人数 (名)</label>
-        <input type="number" id="buildWorkers" value="2.5" step="0.5">
-
-        <label>試運転 人数 (名)</label>
-        <input type="number" id="testWorkers" value="2.5" step="0.5">
-
-        <h3 style="margin-top:15px;">2. バッファ(空き日)の設定</h3>
-        <div class="input-group buffer-group">
-            <label>試運転 〜 立会日 の空き (日)</label>
-            <input type="number" id="bufT2D" value="1">
-            <label>電工終了 〜 試運転開始 の空き (日)</label>
-            <input type="number" id="bufE2T" value="10">
-            <label>組立終了 〜 電工開始 の空き (日)</label>
-            <input type="number" id="bufB2E" value="0">
-        </div>
-
-        <button onclick="calculate()">スケジュール計算実行</button>
-    </div>
-
-    <div class="panel">
-        <h3>3. 計算結果</h3>
-        <div id="results">
-            <div class="result-item">【試運転】<br><span class="date-val" id="res-test"></span></div>
-            <div class="result-item">【電気工事】<br><span class="date-val" id="res-elec"></span></div>
-            <div class="result-item">【組立】<br><span class="date-val" id="res-build"></span></div>
-            
-            <div style="margin-top: 10px; font-size: 0.8em;">
-                <input type="checkbox" id="showEmptyLabel" checked style="width:auto; margin-top:0;"> 
-                <label style="display:inline;" for="showEmptyLabel">空き日に「空」と記入する</label>
-            </div>
-
-            <button class="copy-btn" onclick="copyExcelData()">Excel用データをコピー</button>
-            
-            <label style="margin-top:15px;">結果テキスト（報告用）</label>
-            <textarea id="textSummary" class="text-summary" readonly></textarea>
-            <button style="background-color: #666;" onclick="copyTextSummary()">テキストをコピー</button>
-        </div>
-        <div id="placeholder" style="color: #999; text-align: center; margin-top: 30px;">
-            数値を入力して計算してください
-        </div>
-    </div>
+<div class="sidebar">
+    <div class="logo">Converge</div>
+    <div class="logo-sub">QUIET PRECISION</div>
+    
+    <div style="margin-top: 40px;"></div>
+    <div class="nav-item active" id="nav-calc" onclick="showPage('calc')">SCHEDULER</div>
+    <div class="nav-item" id="nav-holiday" onclick="showPage('holiday')">HOLIDAYS</div>
 </div>
 
-<div class="calendar-container">
-    <h3>社内休日設定 (クリックで切替)</h3>
-    <div id="calendar-view" class="calendar-grid"></div>
+<div class="main-content">
+    <!-- スケジューラー画面 -->
+    <div id="page-calc">
+        <div class="header-title">Engineering Scheduler</div>
+        <div class="header-sub">Backward plan your manufacturing process with clinical accuracy.</div>
+
+        <div class="converter-card">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Assembly Total Hours (h)</label>
+                    <input type="number" id="buildHours" value="1920">
+                </div>
+                <div class="input-group">
+                    <label>Deadline (Delivery Date)</label>
+                    <input type="date" id="deadline">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Test Run Hours (h)</label>
+                    <input type="number" id="testHours" value="280">
+                </div>
+                <div class="input-group">
+                    <label>Electrical Days (d)</label>
+                    <input type="number" id="elecDays" value="1">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Assembly Workers</label>
+                    <input type="number" id="buildWorkers" value="2.5" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Test Run Workers</label>
+                    <input type="number" id="testWorkers" value="2.5" step="0.5">
+                </div>
+            </div>
+
+            <label style="font-size: 10px; font-weight: bold; color: var(--text-sub); margin-bottom: 10px; display: block;">BUFFER SETTINGS (WORK DAYS)</label>
+            <div class="buffer-section">
+                <div>
+                    <label style="font-size: 9px;">Test to Deadline</label>
+                    <input type="number" id="bufT2D" class="buffer-input" value="1">
+                </div>
+                <div>
+                    <label style="font-size: 9px;">Elec to Test</label>
+                    <input type="number" id="bufE2T" class="buffer-input" value="10">
+                </div>
+                <div>
+                    <label style="font-size: 9px;">Build to Elec</label>
+                    <input type="number" id="bufB2E" class="buffer-input" value="0">
+                </div>
+            </div>
+
+            <button class="primary-btn" onclick="calculate()">CALCULATE SCHEDULE</button>
+        </div>
+
+        <div class="recent-section" id="result-area" style="display: none;">
+            <div class="recent-header">
+                <div class="recent-title">Schedule Result</div>
+                <div style="font-size: 12px; cursor: pointer; text-decoration: underline;" onclick="copyExcelData()">Copy for Excel</div>
+            </div>
+
+            <div class="result-row active">
+                <div class="result-label">Assembly Period (組立)</div>
+                <div class="result-date" id="res-build"></div>
+            </div>
+            <div class="result-row">
+                <div class="result-label">Electrical Work (電工)</div>
+                <div class="result-date" id="res-elec"></div>
+            </div>
+            <div class="result-row">
+                <div class="result-label">Test Run Period (試運転)</div>
+                <div class="result-date" id="res-test"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 休日設定画面 -->
+    <div id="page-holiday" class="calendar-view">
+        <div class="header-title">Company Holidays</div>
+        <div class="header-sub">Select non-working days for your specific organization.</div>
+        <div id="calendar-grid" class="calendar-grid"></div>
+    </div>
 </div>
 
 <script>
     let customHolidays = new Set();
-    let computedData = { dayMap: [], summary: "" };
+    let computedData = { dayMap: [] };
+
+    // 画面切り替え
+    function showPage(page) {
+        document.getElementById('page-calc').style.display = page === 'calc' ? 'block' : 'none';
+        document.getElementById('page-holiday').style.display = page === 'holiday' ? 'grid' : 'none';
+        document.getElementById('nav-calc').classList.toggle('active', page === 'calc');
+        document.getElementById('nav-holiday').classList.toggle('active', page === 'holiday');
+    }
 
     function formatDateStr(date) {
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -116,40 +333,43 @@
     };
 
     function renderCalendars() {
-        const container = document.getElementById('calendar-view');
-        container.innerHTML = '';
-        const currentYear = new Date().getFullYear();
-        [currentYear, currentYear + 1, currentYear + 2].forEach(year => {
-            for (let month = 0; month < 12; month++) {
-                const monthDiv = document.createElement('div'); monthDiv.className = 'month';
-                const title = document.createElement('div'); title.className = 'month-name';
-                title.innerText = `${year}年 ${month + 1}月`; monthDiv.appendChild(title);
-                const grid = document.createElement('div'); grid.className = 'days-grid';
-                ['日','月','火','水','木','金','土'].forEach(d => {
-                    const dDiv = document.createElement('div'); dDiv.innerText = d; grid.appendChild(dDiv);
-                });
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-                for (let i = 0; i < firstDay.getDay(); i++) grid.appendChild(document.createElement('div'));
+        const grid = document.getElementById('calendar-grid');
+        grid.innerHTML = '';
+        const years = [2026, 2027];
+        years.forEach(year => {
+            for (let m = 0; m < 12; m++) {
+                const monthDiv = document.createElement('div');
+                monthDiv.className = 'month';
+                const title = document.createElement('div');
+                title.className = 'month-name';
+                title.innerText = `${year} / ${m + 1}`;
+                monthDiv.appendChild(title);
+
+                const daysDiv = document.createElement('div');
+                daysDiv.className = 'days';
+                const firstDay = new Date(year, m, 1);
+                const lastDay = new Date(year, m + 1, 0);
+                
+                for (let i = 0; i < firstDay.getDay(); i++) daysDiv.appendChild(document.createElement('div'));
                 for (let d = 1; d <= lastDay.getDate(); d++) {
-                    const dateObj = new Date(year, month, d);
+                    const dateObj = new Date(year, m, d);
                     const dateStr = formatDateStr(dateObj);
-                    const dayDiv = document.createElement('div');
-                    dayDiv.className = 'day';
-                    if (dateObj.getDay() === 0) dayDiv.classList.add('sun');
-                    if (dateObj.getDay() === 6) dayDiv.classList.add('sat');
-                    if (customHolidays.has(dateStr)) dayDiv.classList.add('holiday');
-                    dayDiv.innerText = d;
-                    dayDiv.onclick = () => {
+                    const dDiv = document.createElement('div');
+                    dDiv.className = 'day';
+                    if (dateObj.getDay() === 0) dDiv.classList.add('sun');
+                    if (dateObj.getDay() === 6) dDiv.classList.add('sat');
+                    if (customHolidays.has(dateStr)) dDiv.classList.add('holiday');
+                    dDiv.innerText = d;
+                    dDiv.onclick = () => {
                         if (customHolidays.has(dateStr)) customHolidays.delete(dateStr);
                         else customHolidays.add(dateStr);
                         localStorage.setItem('press_holidays', JSON.stringify([...customHolidays]));
                         renderCalendars();
                     };
-                    grid.appendChild(dayDiv);
+                    daysDiv.appendChild(dDiv);
                 }
-                monthDiv.appendChild(grid);
-                container.appendChild(monthDiv);
+                monthDiv.appendChild(daysDiv);
+                grid.appendChild(monthDiv);
             }
         });
     }
@@ -181,47 +401,36 @@
         const buildHrs = parseFloat(document.getElementById('buildHours').value);
         const buildWkr = parseFloat(document.getElementById('buildWorkers').value);
         const buildDays = Math.ceil(buildHrs / (buildWkr * 8));
-
         const testHrs = parseFloat(document.getElementById('testHours').value);
         const testWkr = parseFloat(document.getElementById('testWorkers').value);
         const testDays = Math.ceil(testHrs / (testWkr * 8));
-
         const elecDays = parseInt(document.getElementById('elecDays').value);
-        const bT2D = parseInt(document.getElementById('bufT2D').value);
-        const bE2T = parseInt(document.getElementById('bufE2T').value);
-        const bB2E = parseInt(document.getElementById('bufB2E').value);
+        const bufT2D = parseInt(document.getElementById('bufT2D').value);
+        const bufE2T = parseInt(document.getElementById('bufE2T').value);
+        const bufB2E = parseInt(document.getElementById('bufB2E').value);
 
         const deadlineVal = document.getElementById('deadline').value;
-        if (!deadlineVal) return alert("立会日を入力してください");
+        if (!deadlineVal) return alert("Please select a deadline.");
         const deadlineDate = new Date(deadlineVal.replace(/-/g, '/')); 
 
-        // 試運転
         let testEnd = new Date(deadlineDate);
-        for(let i=0; i<bT2D; i++) testEnd = getPrevWorkDay(testEnd);
+        for(let i=0; i<bufT2D; i++) testEnd = getPrevWorkDay(testEnd);
         const testStart = subtractWorkDays(testEnd, testDays);
 
-        // 電工
         let elecEnd = testStart;
-        for(let i=0; i<bE2T; i++) elecEnd = getPrevWorkDay(elecEnd);
+        for(let i=0; i<bufE2T; i++) elecEnd = getPrevWorkDay(elecEnd);
         const elecStart = subtractWorkDays(elecEnd, elecDays);
 
-        // 組立
         let buildEnd = elecStart;
-        for(let i=0; i<bB2E; i++) buildEnd = getPrevWorkDay(buildEnd);
+        for(let i=0; i<bufB2E; i++) buildEnd = getPrevWorkDay(buildEnd);
         const buildStart = subtractWorkDays(buildEnd, buildDays);
 
         const fmt = d => d.toLocaleDateString('ja-JP');
-        document.getElementById('res-test').innerText = `${fmt(testStart)} ～ ${fmt(testEnd)}`;
-        document.getElementById('res-elec').innerText = `${fmt(elecStart)} ～ ${fmt(elecEnd)}`;
-        document.getElementById('res-build').innerText = `${fmt(buildStart)} ～ ${fmt(buildEnd)}`;
+        document.getElementById('res-build').innerText = `${fmt(buildStart)} - ${fmt(buildEnd)}`;
+        document.getElementById('res-elec').innerText = `${fmt(elecStart)} - ${fmt(elecEnd)}`;
+        document.getElementById('res-test').innerText = `${fmt(testStart)} - ${fmt(testEnd)}`;
         
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('placeholder').style.display = 'none';
-
-        // テキストサマリー作成
-        const summary = `【立会日】 ${fmt(deadlineDate)}\n【試運転】 ${fmt(testStart)} ～ ${fmt(testEnd)}\n【電気工事】 ${fmt(elecStart)} ～ ${fmt(elecEnd)}\n【組立】 ${fmt(buildStart)} ～ ${fmt(buildEnd)}`;
-        document.getElementById('textSummary').value = summary;
-        computedData.summary = summary;
+        document.getElementById('result-area').style.display = 'block';
 
         generateExcelData(buildStart, deadlineDate, {
             bS: buildStart, bE: buildEnd, eS: elecStart, eE: elecEnd, tS: testStart, tE: testEnd
@@ -231,7 +440,6 @@
     function generateExcelData(rangeStart, rangeEnd, r) {
         let current = new Date(rangeStart);
         let output = [];
-        const useEmptyLabel = document.getElementById('showEmptyLabel').checked;
         while (current <= rangeEnd) {
             let label = "";
             if (isWorkDay(current)) {
@@ -239,7 +447,7 @@
                 if (cStr >= formatDateStr(r.bS) && cStr <= formatDateStr(r.bE)) label = "組";
                 else if (cStr >= formatDateStr(r.eS) && cStr <= formatDateStr(r.eE)) label = "電";
                 else if (cStr >= formatDateStr(r.tS) && cStr <= formatDateStr(r.tE)) label = "試";
-                else label = useEmptyLabel ? "空" : "";
+                else label = "空";
             }
             output.push(label);
             current.setDate(current.getDate() + 1);
@@ -248,11 +456,8 @@
     }
 
     function copyExcelData() {
-        navigator.clipboard.writeText(computedData.dayMap.join('\t')).then(() => alert("Excel用データをコピーしました。"));
-    }
-
-    function copyTextSummary() {
-        navigator.clipboard.writeText(computedData.summary).then(() => alert("結果テキストをコピーしました。"));
+        if (computedData.dayMap.length === 0) return;
+        navigator.clipboard.writeText(computedData.dayMap.join('\t')).then(() => alert("Copied to clipboard for Excel."));
     }
 </script>
 
