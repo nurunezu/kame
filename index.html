@@ -2,547 +2,259 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>タナカカメ：106年目の再創業</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>工程逆算スケジューラー（社内用）</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Montserrat:wght@800&display=swap');
+        body { font-family: "Segoe UI", Meiryo, sans-serif; line-height: 1.4; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; background-color: #f4f7f9; }
+        h1 { border-bottom: 2px solid #005eb8; color: #005eb8; padding-bottom: 10px; font-size: 1.5em; }
+        .container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .panel { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 380px; }
+        .input-group { margin-bottom: 10px; padding: 8px; border: 1px solid #eee; border-radius: 4px; }
+        .buffer-group { background-color: #fff4e6; border-color: #ffd8a8; }
+        h3 { margin-top: 0; color: #005eb8; font-size: 1em; border-left: 4px solid #005eb8; padding-left: 10px; margin-bottom: 10px; }
+        label { display: block; font-weight: bold; font-size: 0.8em; color: #555; }
+        input, button { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #005eb8; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; transition: 0.2s; }
+        button:hover { background-color: #00458a; }
+        .copy-btn { background-color: #28a745; margin-top: 10px; }
+        .copy-btn:hover { background-color: #218838; }
         
-        :root {
-            --bg-dark: #0a0a0a;
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-            --accent-gold: #d4af37;
-            --accent-red: #ef4444;
-        }
+        .calendar-container { margin-top: 20px; background: white; padding: 15px; border-radius: 8px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        .month { border: 1px solid #eee; padding: 5px; font-size: 0.75em; }
+        .month-name { text-align: center; font-weight: bold; background: #eee; }
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+        .day { padding: 3px 0; cursor: pointer; border-radius: 2px; }
+        .holiday { background-color: #ffcccc !important; color: #cc0000; font-weight: bold; }
+        .sun { color: red; } .sat { color: blue; }
 
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: var(--bg-dark);
-            color: #e5e7eb;
-            margin: 0;
-            line-height: 1.6;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        /* セクションの余白をスマホとPCで切り替え */
-        section {
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 4rem 5%; /* スマホ用余白 */
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-            background: var(--bg-gradient);
-            position: relative;
-            box-sizing: border-box;
-        }
-        @media (min-width: 768px) {
-            section { padding: 6rem 8%; }
-        }
-        @media (min-width: 1024px) {
-            section { padding: 8rem 10%; }
-        }
-
-        /* タイトルの自動縮小設定 */
-        .title-huge {
-            font-family: 'Montserrat', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            line-height: 1.1;
-            font-weight: 800;
-        }
-
-        /* カードデザインのスマホ最適化 */
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            border-left: 6px solid var(--accent-gold);
-            padding: 1.5rem; /* スマホ用 */
-            border-radius: 0 1rem 1rem 0;
-            margin-top: 1.5rem;
-            display: block;
-        }
-        .danger-card {
-            background: rgba(239, 68, 68, 0.05);
-            border: 2px solid var(--accent-red);
-            padding: 1.5rem; /* スマホ用 */
-            border-radius: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        @media (min-width: 768px) {
-            .card { padding: 3rem; border-left-width: 8px; border-radius: 0 1.5rem 1.5rem 0; margin-top: 2rem; }
-            .danger-card { padding: 3rem; border-width: 3px; border-radius: 1.5rem; margin-bottom: 2rem; }
-        }
-
-        .accent-gold { color: var(--accent-gold); }
-        .accent-red { color: var(--accent-red); }
-
-        #progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 6px;
-            background: var(--accent-gold);
-            z-index: 1000;
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
-        }
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .grid-custom {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        @media (min-width: 1024px) {
-            .grid-custom {
-                grid-template-columns: 1fr 1fr;
-                gap: 3rem;
-            }
-        }
-
-        /* リストのスマホ・PC対応 */
-        ul { list-style: none; padding: 0; }
-        ul li {
-            font-size: 1.1rem; /* スマホ用 */
-            margin-bottom: 1rem;
-            padding-left: 2rem;
-            position: relative;
-            line-height: 1.5;
-        }
-        @media (min-width: 768px) {
-            ul li {
-                font-size: 1.5rem;
-                margin-bottom: 1.5rem;
-                padding-left: 2.5rem;
-            }
-        }
-        @media (min-width: 1024px) {
-            ul li {
-                font-size: 1.85rem;
-                margin-bottom: 2rem;
-                padding-left: 3rem;
-            }
-        }
-        ul li::before {
-            content: '\f058';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            left: 0;
-            top: 0.1rem;
-            color: var(--accent-gold);
-        }
-        .li-danger::before {
-            content: '\f06a';
-            color: var(--accent-red);
-        }
-
-        .icon-bg {
-            font-size: 8rem; /* スマホ用 */
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            opacity: 0.05;
-            pointer-events: none;
-        }
-        @media (min-width: 768px) {
-            .icon-bg { font-size: 15rem; bottom: 2rem; right: 2rem; }
-        }
-
-        .case-detail {
-            font-size: 1.1rem; /* スマホ用 */
-            color: #cbd5e1;
-            margin-top: 0.5rem;
-        }
-        @media (min-width: 768px) {
-            .case-detail { font-size: 1.5rem; margin-top: 1rem; }
-        }
-
-        .signature {
-            font-family: 'Noto Sans JP', sans-serif;
-            border-top: 1px solid rgba(212, 175, 55, 0.3);
-            display: inline-block;
-            padding-top: 1rem;
-            margin-top: 2rem;
-            opacity: 0.8;
-            letter-spacing: 0.1em;
-            font-size: 1.2rem;
-        }
-        @media (min-width: 768px) {
-            .signature { margin-top: 4rem; letter-spacing: 0.2em; font-size: 1.5rem; }
-        }
+        #results { margin-top: 15px; padding: 10px; background: #e9f7ef; border-left: 5px solid #28a745; display: none; }
+        .result-item { margin-bottom: 8px; font-size: 0.9em; border-bottom: 1px solid #c8e6c9; }
+        .date-val { font-weight: bold; color: #2e7d32; font-size: 1.1em; }
+        .text-summary { width: 100%; height: 80px; font-size: 0.8em; margin-top: 10px; padding: 5px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
 
-    <div id="progress-bar"></div>
+<h1>工程逆算スケジューラー</h1>
 
-    <!-- 1: HERO -->
-    <section>
-        <div class="reveal">
-            <h2 class="text-xl md:text-2xl lg:text-3xl mb-4 md:mb-6 accent-gold font-bold tracking-[0.2em] md:tracking-[0.3em]">106年の看板が燃える音</h2>
-            <h1 class="title-huge mb-6 md:mb-10 text-white">THE REBIRTH<br>OF <span class="accent-gold">TANAKA KAME</span></h1>
-            <p class="text-xl md:text-3xl lg:text-4xl text-gray-400 font-bold leading-tight">
-                沈黙の危機を突破し、<br class="hidden md:block">
-                「最強の組織」へ再起動する提言
-            </p>
+<div class="container">
+    <div class="panel">
+        <h3>1. 条件入力</h3>
+        <label>立会日程 (最終日)</label>
+        <input type="date" id="deadline">
+
+        <label>組立 総工数 (h)</label>
+        <input type="number" id="buildHours" value="1920">
+
+        <label>試運転 総工数 (h)</label>
+        <input type="number" id="testHours" value="280">
+
+        <label>電気工事 日数 (稼働日)</label>
+        <input type="number" id="elecDays" value="1">
+
+        <label>組立 人数 (名)</label>
+        <input type="number" id="buildWorkers" value="2.5" step="0.5">
+
+        <label>試運転 人数 (名)</label>
+        <input type="number" id="testWorkers" value="2.5" step="0.5">
+
+        <h3 style="margin-top:15px;">2. バッファ(空き日)の設定</h3>
+        <div class="input-group buffer-group">
+            <label>試運転 〜 立会日 の空き (日)</label>
+            <input type="number" id="bufT2D" value="1">
+            <label>電工終了 〜 試運転開始 の空き (日)</label>
+            <input type="number" id="bufE2T" value="10">
+            <label>組立終了 〜 電工開始 の空き (日)</label>
+            <input type="number" id="bufB2E" value="0">
         </div>
-    </section>
 
-    <!-- 2: FACT -->
-    <section>
-        <div class="reveal">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 border-b-2 md:border-b-4 border-red-500 pb-4 md:pb-6">事実：市場からの「最後通牒」</h2>
-            <div class="grid-custom">
-                <div class="space-y-6 md:space-y-10">
-                    <div class="danger-card">
-                        <h3 class="text-3xl md:text-4xl lg:text-5xl font-black accent-red mb-3 md:mb-4">量産品キャンセル</h3>
-                        <p class="text-lg md:text-2xl lg:text-3xl leading-relaxed">
-                            不具合発覚からの取引停止。<br>
-                            数億円規模の損失の可能性。
-                        </p>
-                    </div>
-                    <p class="text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed">
-                        これは単なる「初期不良」ではありません。<br>
-                        タナカカメというブランドが、<br>
-                        <span class="text-white">市場から「拒絶」された歴史的な瞬間です。</span>
-                    </p>
-                </div>
-                <div class="card" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.1);">
-                    <p class="text-xl md:text-2xl text-red-400 mb-4 md:mb-8 font-bold">【発生した不具合】</p>
-                    <ul>
-                        <li class="li-danger">配管内へのあり得ないレベルの異物混入</li>
-                        <li class="li-danger">シリンダー接続部への養生テープ挟み込み</li>
-                        <li class="li-danger">規定値に達していないボルトの締め付け</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+        <button onclick="calculate()">スケジュール計算実行</button>
+    </div>
 
-    <!-- 3: GAP -->
-    <section>
-        <div class="reveal">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16 accent-gold">致命的な「温度差」</h2>
-            <div class="grid-custom">
-                <div class="space-y-4 md:space-y-8">
-                    <h3 class="text-xl md:text-3xl font-bold text-white border-l-4 md:border-l-8 border-red-500 pl-4 md:pl-6">経営陣の危機感</h3>
-                    <div class="p-6 md:p-10 bg-red-900/30 rounded-lg md:rounded-xl text-lg md:text-2xl lg:text-3xl italic leading-relaxed">
-                        「このままでは会社が倒産する」<br>
-                        「信頼をどう取り戻すのか」<br>
-                        「このピンチをチャンスに変えろ」
-                    </div>
-                </div>
-                <div class="space-y-4 md:space-y-8">
-                    <h3 class="text-xl md:text-3xl font-bold text-gray-400 border-l-4 md:border-l-8 border-gray-600 pl-4 md:pl-6">現場の空気</h3>
-                    <div class="p-6 md:p-10 bg-gray-800/50 rounded-lg md:rounded-xl text-lg md:text-2xl lg:text-3xl text-gray-400 italic leading-relaxed">
-                        「今日も忙しいな」<br>
-                        「いつも通りやっている」<br>
-                        「新人がやったことだから仕方ない」
-                    </div>
-                </div>
-            </div>
-            <p class="mt-12 md:mt-24 text-xl md:text-3xl lg:text-4xl text-center accent-red font-bold tracking-widest">
-                現場は、明日も「同じミス」を繰り返す準備ができています。
-            </p>
-        </div>
-    </section>
-
-    <!-- 4: THE CURSE -->
-    <section>
-        <div class="reveal text-center max-w-6xl mx-auto">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16">呪いの言葉：<span class="accent-red">「忙しかったから」</span></h2>
-            <p class="text-xl md:text-3xl lg:text-4xl font-bold mb-8 md:mb-16 leading-relaxed">
-                「忙しい」という言葉は、<br>
-                <span class="text-white">思考停止のサインであり、品質への白旗です。</span>
-            </p>
-            <div class="card text-left p-6 md:p-12" style="border-radius: 1rem md:1.5rem;">
-                <p class="text-lg md:text-2xl lg:text-3xl leading-relaxed">
-                    忙しいからミスをしたのではない。<br>
-                    <span class="accent-gold font-bold">「忙しくなると機能しなくなるほど、仕組みが脆弱だった」</span><br>
-                    これが今回突きつけられた、残酷な本質です。
-                </p>
-            </div>
-            <p class="text-xl md:text-3xl lg:text-4xl text-red-500 font-bold mt-10 md:mt-16">
-                この言葉を放置すれば、来週また、同じ不具合が起きます。
-            </p>
-        </div>
-    </section>
-
-    <!-- 5: NEW 106 YEARS -->
-    <section>
-        <div class="reveal">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-10 md:mb-16 text-center">「運任せ」の品質管理からの脱却</h2>
-            <div class="grid-custom">
-                <div class="space-y-6 md:space-y-10">
-                    <h3 class="text-xl md:text-3xl font-bold accent-red border-b-2 border-red-500 pb-2 md:pb-4">これまでの106年（属人化）</h3>
-                    <ul>
-                        <li class="li-danger">職人の「良心」と「頑張り」に依存</li>
-                        <li class="li-danger">見えない場所は「多分大丈夫」で出荷</li>
-                        <li class="li-danger">ミスは「個人の不注意」として片付け</li>
-                    </ul>
-                </div>
-                <div class="space-y-6 md:space-y-10">
-                    <h3 class="text-xl md:text-3xl font-bold text-green-400 border-b-2 border-green-400 pb-2 md:pb-4">これからの106年（システム化）</h3>
-                    <ul>
-                        <li>人間を疑い、「仕組み」を絶対視する</li>
-                        <li>全ての工程に「デジタルな証拠」を残す</li>
-                        <li>忙しさを言い訳にできない物理的制約</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 6: CASE INTRO -->
-    <section>
-        <div class="reveal text-center max-w-6xl mx-auto">
-            <h2 class="text-3xl md:text-5xl lg:text-7xl font-black mb-8 md:mb-12 accent-gold italic">逆境を「再起動」に<br>変えた先人たち</h2>
-            <hr class="w-24 md:w-48 mx-auto border-t-4 md:border-t-8 border-gold mb-10 md:mb-16">
-            <p class="text-lg md:text-3xl lg:text-4xl text-gray-400 leading-relaxed">
-                絶望的な不祥事から、以前より強固な組織に生まれ変わった企業には、<br class="hidden md:block">
-                共通する「思想的決断」があります。
-            </p>
-        </div>
-    </section>
-
-    <!-- 7: TOYOTA (Detailed) -->
-    <section>
-        <div class="reveal">
-            <div class="grid-custom items-center">
-                <div>
-                    <h3 class="text-5xl md:text-7xl lg:text-8xl font-black mb-4 md:mb-8">TOYOTA</h3>
-                    <h4 class="text-xl md:text-3xl accent-gold mb-6 md:mb-10 font-bold">2010年：大規模リコール危機</h4>
-                    <div class="space-y-4 md:space-y-6">
-                        <p class="text-red-400 font-bold text-lg md:text-2xl">【何が起きたのか】</p>
-                        <p class="case-detail">アクセルペダルの不具合やフロアマットの干渉により、意図せぬ加速が発生。全世界で850万台を超える大規模リコールに発展。豊田章男社長（当時）が米公聴会で涙ながらに証言する事態となった。</p>
-                        <p class="text-gold font-bold text-lg md:text-2xl mt-6 md:mt-8">【抜本的改善：アンドンの思想】</p>
-                        <p class="text-xl md:text-2xl lg:text-3xl font-bold">「止める勇気」の再定義</p>
-                        <p class="case-detail">「台数拡大（量）」が「人材育成（質）」を追い越したことを認め、グローバル品質特別委員会を新設。異常があれば<span class="text-white font-bold">「新入社員でもラインを止めていい」</span>アンドンの権限を再徹底。忙しさを理由にした「流し」を物理的に不可能にするシステムへ回帰した。</p>
-                    </div>
-                </div>
-                <div class="card p-8 md:p-16">
-                    <p class="text-xl md:text-3xl lg:text-4xl italic font-bold leading-relaxed">
-                        「忙しいからと流すのではなく、不備があれば物理的に止まる仕組みこそが、最強の効率を生む。」
-                    </p>
-                </div>
-            </div>
-            <i class="fa-solid fa-industry icon-bg"></i>
-        </div>
-    </section>
-
-    <!-- 8: TANAKA KAME x TOYOTA -->
-    <section>
-        <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16 accent-gold text-center">タナカカメへの示唆：トヨタ篇</h2>
-            <div class="card border-l-4 md:border-l-[12px] border-red-500 bg-red-900/10 p-8 md:p-16 lg:p-20">
-                <p class="text-lg md:text-3xl lg:text-4xl font-bold leading-loose">
-                    「忙しかった」という言い訳を許すのは、<br>
-                    組織が現場から<span class="accent-red">「止める勇気」を奪っている</span>からです。<br><br>
-                    必要なのは精神論ではなく、<br>
-                    <span class="text-white text-2xl md:text-4xl lg:text-5xl font-black inline-block mt-2 mb-2">不備があれば工程が物理的に止まる</span><br>
-                    冷徹な仕組みへの回帰です。
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 9: J&J (Detailed) -->
-    <section>
-        <div class="reveal">
-            <div class="grid-custom items-center">
-                <div>
-                    <h3 class="text-5xl md:text-7xl lg:text-8xl font-black mb-4 md:mb-8">J&J</h3>
-                    <h4 class="text-xl md:text-3xl accent-gold mb-6 md:mb-10 font-bold">100億円を捨てた「誠実さ」</h4>
-                    <div class="space-y-4 md:space-y-6">
-                        <p class="text-red-400 font-bold text-lg md:text-2xl">【何が起きたのか】</p>
-                        <p class="case-detail">1982年、主力製品のタイレノールに毒物が混入され、シカゴで7人が死亡。市場シェアは37%から7%へ急落。会社の存続すら危ぶまれる絶望的な状況に陥った。</p>
-                        <p class="text-gold font-bold text-lg md:text-2xl mt-6 md:mt-8">【抜本的改善：我が信条】</p>
-                        <p class="text-xl md:text-2xl lg:text-3xl font-bold">利益より「信条」を優先</p>
-                        <p class="case-detail">経営陣は弁護士の「責任を限定せよ」という助言を無視。約1億ドルをかけて3100万本の製品を全米から回収。さらに業界初となる<span class="text-white font-bold">「三重密閉の不正開封防止パッケージ」</span>を開発し、世界基準へと押し上げた。この「自己犠牲を伴う公開」が、事件前を上回る信頼を勝ち取った。</p>
-                    </div>
-                </div>
-                <div class="card p-8 md:p-16" style="border-color: #3b82f6;">
-                    <p class="text-xl md:text-3xl lg:text-4xl italic font-bold text-blue-300 leading-relaxed">
-                        「隠蔽はブランドを殺すが、自己犠牲を伴う誠実さは、競合が一生追いつけない信頼を作る。」
-                    </p>
-                </div>
-            </div>
-            <i class="fa-solid fa-briefcase-medical icon-bg"></i>
-        </div>
-    </section>
-
-    <!-- 10: TANAKA KAME x J&J -->
-    <section>
-        <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16 accent-gold text-center">タナカカメへの示唆：J&J篇</h2>
-            <div class="card p-8 md:p-16 lg:p-20">
-                <p class="text-lg md:text-3xl lg:text-4xl font-bold leading-loose">
-                    今回の不具合を「隠すべき損失」と見るか、<br>
-                    <span class="accent-gold">「誠実さを売るための舞台」</span>と見るか。<br><br>
-                    「最悪の事態」を「最高のPR」に書き換える、<br>
-                    <span class="text-white text-2xl md:text-4xl lg:text-5xl font-black inline-block mt-2 mb-2">ナラティブ（物語）の力</span>が必要です。<br>
-                    この反省を、ブランドの武器に変えます。
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 11: KOMATSU (Detailed) -->
-    <section>
-        <div class="reveal">
-            <div class="grid-custom items-center">
-                <div>
-                    <h3 class="text-5xl md:text-7xl lg:text-8xl font-black mb-4 md:mb-8">KOMATSU</h3>
-                    <h4 class="text-xl md:text-3xl accent-gold mb-6 md:mb-10 font-bold">機械を「監視」するイノベーション</h4>
-                    <div class="space-y-4 md:space-y-6">
-                        <p class="text-red-400 font-bold text-lg md:text-2xl">【何が起きたのか】</p>
-                        <p class="case-detail">90年代、激しい価格競争と品質問題に直面。特に「過酷な現場でなぜ壊れるのか」がブラックボックス化しており、場当たり的な修理が繰り返され、顧客の信頼を失っていた。</p>
-                        <p class="text-gold font-bold text-lg md:text-2xl mt-6 md:mt-8">【抜本的改善：KOMTRAX】</p>
-                        <p class="text-xl md:text-2xl lg:text-3xl font-bold">「見えない」を「可視化」へ</p>
-                        <p class="case-detail">全機体にGPSとセンサーを標準搭載。燃料、稼働時間、負荷を24時間監視し、不具合の兆候を<span class="text-white font-bold">「壊れる前に察知」</span>する予兆管理を実現。「機械を売る」ビジネスから「止まらない現場を売る」サービス業へとモデル自体を転換し、世界シェア2位の地位を不動のものにした。</p>
-                    </div>
-                </div>
-                <div class="card p-8 md:p-16" style="border-color: #ca8a04;">
-                    <p class="text-xl md:text-3xl lg:text-4xl italic font-bold text-yellow-500 leading-relaxed">
-                        「見えない場所で起きていることを可視化すれば、不具合は『解決すべきデータ』に変わる。」
-                    </p>
-                </div>
-            </div>
-            <i class="fa-solid fa-satellite icon-bg"></i>
-        </div>
-    </section>
-
-    <!-- 12: TANAKA KAME x KOMATSU -->
-    <section>
-        <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16 accent-gold text-center">タナカカメへの示唆：コマツ篇</h2>
-            <div class="card border-l-4 md:border-l-[12px] border-yellow-500 bg-yellow-900/10 p-8 md:p-16 lg:p-20">
-                <p class="text-lg md:text-3xl lg:text-4xl font-bold leading-loose">
-                    「出張中で見れない」「現場が何をしているか分からない」<br>
-                    そんな盲点を、<span class="accent-gold text-2xl md:text-4xl lg:text-5xl font-black inline-block mt-2 mb-2">デジタルで強制的に可視化</span>する。<br><br>
-                    単に直すだけではない。<br>
-                    <span class="text-white">「稼働率を保証する品質管理」</span>へと進化し、<br>
-                    106年の誇りを、圧倒的な信頼へ再構築します。
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 13: ASSET STRATEGY -->
-    <section>
-        <div class="reveal max-w-7xl mx-auto">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-10 md:mb-16 accent-gold text-center">失敗を「最強の資産」へ</h2>
-            <div class="grid-custom">
-                <div class="card">
-                    <div class="flex items-center gap-4 md:gap-6 mb-4 md:mb-8">
-                        <i class="fa-solid fa-book-open text-3xl md:text-5xl accent-gold"></i>
-                        <h3 class="text-xl md:text-3xl lg:text-4xl font-bold">不具合情報の資産化</h3>
-                    </div>
-                    <p class="text-base md:text-xl lg:text-2xl leading-relaxed">今回のミス、原因、改善プロセスを全て記録。これは将来、同じ悩みに苦しむ企業向けの**「品質コンサル事業」の最強の教材**になります。</p>
-                </div>
-                <div class="card">
-                    <div class="flex items-center gap-4 md:gap-6 mb-4 md:mb-8">
-                        <i class="fa-solid fa-shield-halved text-3xl md:text-5xl accent-gold"></i>
-                        <h3 class="text-xl md:text-3xl lg:text-4xl font-bold">エビデンスによる信頼</h3>
-                    </div>
-                    <p class="text-base md:text-xl lg:text-2xl leading-relaxed">「気をつけます」ではなく「証拠があります」で戦う。全ての機体に工程写真を添えて納品。**「タナカカメなら安心だ」という物理的証拠**を売りにします。</p>
-                </div>
-            </div>
-            <p class="mt-12 md:mt-24 text-2xl md:text-4xl lg:text-5xl font-black text-center accent-gold italic underline decoration-white underline-offset-4 md:underline-offset-8">
-                「地獄を見たからこそ、誰よりも品質に詳しい」
-            </p>
-        </div>
-    </section>
-
-    <!-- 14: PROPOSAL -->
-    <section>
-        <div class="reveal max-w-6xl mx-auto">
-            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16">提言：タナカカメに「外の目」を</h2>
-            <p class="text-xl md:text-3xl lg:text-4xl mb-8 md:mb-16 font-bold">私たちが今やるべきは、内側だけで反省することではありません。</p>
-            <div class="p-6 md:p-10 lg:p-16 border-4 md:border-[8px] border-gold bg-gold/5 rounded-2xl md:rounded-3xl shadow-2xl">
-                <h3 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 italic leading-tight accent-gold">「世界が認める品質管理」の成功事例を徹底的にリサーチし、<br class="hidden md:block">タナカカメに適合させる覚悟があるか？</h3>
-                <ul class="text-lg md:text-2xl lg:text-3xl space-y-4 md:space-y-8">
-                    <li>「忙しさ」を封じ込めるワークフローの構築</li>
-                    <li>現場の慢心を不可能にするデジタル監視の導入</li>
-                    <li>失敗を「価値ある物語」に変える広報戦略</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- 15: FINAL CALL -->
-    <section id="final">
-        <div class="reveal text-center max-w-6xl mx-auto space-y-10 md:space-y-16">
-            <h2 class="text-xl md:text-3xl lg:text-4xl accent-gold font-bold tracking-[0.3em] md:tracking-[0.6em]">106年目の創業を、今。</h2>
-            <h1 class="title-huge text-white">I WILL LEAD THE<br><span class="accent-gold">TRANSFORMATION.</span></h1>
+    <div class="panel">
+        <h3>3. 計算結果</h3>
+        <div id="results">
+            <div class="result-item">【試運転】<br><span class="date-val" id="res-test"></span></div>
+            <div class="result-item">【電気工事】<br><span class="date-val" id="res-elec"></span></div>
+            <div class="result-item">【組立】<br><span class="date-val" id="res-build"></span></div>
             
-            <div class="card border-gold p-6 md:p-8 lg:p-12 text-left bg-blue-900/10" style="border-left: 4px solid var(--accent-gold); border-radius: 1rem;">
-                <p class="text-base md:text-2xl lg:text-3xl leading-relaxed text-gray-200">
-                    私は日頃から<span class="accent-gold font-bold">AI（人工知能）</span>を実働ツールとして活用しており、<br class="hidden md:block">
-                    実を言えば、この提言書（Webサイト）自体も、AIとの高度な対話によって構築したものです。<br><br>
-                    106年の伝統にAIという「知能の加速器」を掛け合わせることで、<br class="hidden md:block">
-                    この品質改革を、他社が数年かけるところを数ヶ月で、<br>
-                    <span class="text-white font-bold text-xl md:text-3xl lg:text-4xl inline-block mt-2">最短距離かつ最高精度で完遂したい</span>と考えています。
-                </p>
+            <div style="margin-top: 10px; font-size: 0.8em;">
+                <input type="checkbox" id="showEmptyLabel" checked style="width:auto; margin-top:0;"> 
+                <label style="display:inline;" for="showEmptyLabel">空き日に「空」と記入する</label>
             </div>
 
-            <div class="card p-8 md:p-12 lg:p-16" style="border-color: #d4af37;">
-                <p class="text-xl md:text-3xl lg:text-4xl font-bold leading-relaxed">
-                    「このピンチをチャンスにしたい」という社長の言葉。<br>
-                    私は本気で受け止めています。<br>
-                    そのための「解」を、私が探しに行きます。
-                </p>
-            </div>
-            <p class="text-2xl md:text-4xl lg:text-6xl font-black accent-gold tracking-widest mt-8 md:mt-0">私に、そのリードを任せていただけませんか？</p>
+            <button class="copy-btn" onclick="copyExcelData()">Excel用データをコピー</button>
             
-            <div class="signature-container text-right">
-                <div class="signature">
-                    製造部　勝目　小太郎
-                </div>
-            </div>
+            <label style="margin-top:15px;">結果テキスト（報告用）</label>
+            <textarea id="textSummary" class="text-summary" readonly></textarea>
+            <button style="background-color: #666;" onclick="copyTextSummary()">テキストをコピー</button>
         </div>
-    </section>
+        <div id="placeholder" style="color: #999; text-align: center; margin-top: 30px;">
+            数値を入力して計算してください
+        </div>
+    </div>
+</div>
 
-    <footer class="py-10 md:py-20 text-center bg-black/50 text-gray-500 text-sm md:text-xl">
-        &copy; 106th Anniversary Tanaka Kame REBIRTH Project
-    </footer>
+<div class="calendar-container">
+    <h3>社内休日設定 (クリックで切替)</h3>
+    <div id="calendar-view" class="calendar-grid"></div>
+</div>
 
-    <script>
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            const pb = document.getElementById('progress-bar');
-            if(pb) pb.style.width = scrolled + "%";
-            reveal();
-        });
+<script>
+    let customHolidays = new Set();
+    let computedData = { dayMap: [], summary: "" };
 
-        function reveal() {
-            var reveals = document.querySelectorAll(".reveal");
-            for (var i = 0; i < reveals.length; i++) {
-                var windowHeight = window.innerHeight;
-                var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 50; // スマホでの発火タイミングを少し早める
-                if (elementTop < windowHeight - elementVisible) {
-                    reveals[i].classList.add("visible");
+    function formatDateStr(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+
+    window.onload = () => {
+        const saved = localStorage.getItem('press_holidays');
+        if (saved) customHolidays = new Set(JSON.parse(saved));
+        document.getElementById('deadline').value = "2026-10-28";
+        renderCalendars();
+    };
+
+    function renderCalendars() {
+        const container = document.getElementById('calendar-view');
+        container.innerHTML = '';
+        const currentYear = new Date().getFullYear();
+        [currentYear, currentYear + 1, currentYear + 2].forEach(year => {
+            for (let month = 0; month < 12; month++) {
+                const monthDiv = document.createElement('div'); monthDiv.className = 'month';
+                const title = document.createElement('div'); title.className = 'month-name';
+                title.innerText = `${year}年 ${month + 1}月`; monthDiv.appendChild(title);
+                const grid = document.createElement('div'); grid.className = 'days-grid';
+                ['日','月','火','水','木','金','土'].forEach(d => {
+                    const dDiv = document.createElement('div'); dDiv.innerText = d; grid.appendChild(dDiv);
+                });
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                for (let i = 0; i < firstDay.getDay(); i++) grid.appendChild(document.createElement('div'));
+                for (let d = 1; d <= lastDay.getDate(); d++) {
+                    const dateObj = new Date(year, month, d);
+                    const dateStr = formatDateStr(dateObj);
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'day';
+                    if (dateObj.getDay() === 0) dayDiv.classList.add('sun');
+                    if (dateObj.getDay() === 6) dayDiv.classList.add('sat');
+                    if (customHolidays.has(dateStr)) dayDiv.classList.add('holiday');
+                    dayDiv.innerText = d;
+                    dayDiv.onclick = () => {
+                        if (customHolidays.has(dateStr)) customHolidays.delete(dateStr);
+                        else customHolidays.add(dateStr);
+                        localStorage.setItem('press_holidays', JSON.stringify([...customHolidays]));
+                        renderCalendars();
+                    };
+                    grid.appendChild(dayDiv);
                 }
+                monthDiv.appendChild(grid);
+                container.appendChild(monthDiv);
             }
+        });
+    }
+
+    function isWorkDay(date) {
+        if (date.getDay() === 0 || date.getDay() === 6) return false;
+        return !customHolidays.has(formatDateStr(date));
+    }
+
+    function getPrevWorkDay(date) {
+        let d = new Date(date);
+        d.setDate(d.getDate() - 1);
+        while (!isWorkDay(d)) d.setDate(d.getDate() - 1);
+        return d;
+    }
+
+    function subtractWorkDays(startDate, daysNeeded) {
+        let current = new Date(startDate);
+        if (daysNeeded <= 1) return current;
+        let count = 1;
+        while (count < daysNeeded) {
+            current.setDate(current.getDate() - 1);
+            if (isWorkDay(current)) count++;
         }
-        window.onload = reveal;
-    </script>
+        return current;
+    }
+
+    function calculate() {
+        const buildHrs = parseFloat(document.getElementById('buildHours').value);
+        const buildWkr = parseFloat(document.getElementById('buildWorkers').value);
+        const buildDays = Math.ceil(buildHrs / (buildWkr * 8));
+
+        const testHrs = parseFloat(document.getElementById('testHours').value);
+        const testWkr = parseFloat(document.getElementById('testWorkers').value);
+        const testDays = Math.ceil(testHrs / (testWkr * 8));
+
+        const elecDays = parseInt(document.getElementById('elecDays').value);
+        const bT2D = parseInt(document.getElementById('bufT2D').value);
+        const bE2T = parseInt(document.getElementById('bufE2T').value);
+        const bB2E = parseInt(document.getElementById('bufB2E').value);
+
+        const deadlineVal = document.getElementById('deadline').value;
+        if (!deadlineVal) return alert("立会日を入力してください");
+        const deadlineDate = new Date(deadlineVal.replace(/-/g, '/')); 
+
+        // 試運転
+        let testEnd = new Date(deadlineDate);
+        for(let i=0; i<bT2D; i++) testEnd = getPrevWorkDay(testEnd);
+        const testStart = subtractWorkDays(testEnd, testDays);
+
+        // 電工
+        let elecEnd = testStart;
+        for(let i=0; i<bE2T; i++) elecEnd = getPrevWorkDay(elecEnd);
+        const elecStart = subtractWorkDays(elecEnd, elecDays);
+
+        // 組立
+        let buildEnd = elecStart;
+        for(let i=0; i<bB2E; i++) buildEnd = getPrevWorkDay(buildEnd);
+        const buildStart = subtractWorkDays(buildEnd, buildDays);
+
+        const fmt = d => d.toLocaleDateString('ja-JP');
+        document.getElementById('res-test').innerText = `${fmt(testStart)} ～ ${fmt(testEnd)}`;
+        document.getElementById('res-elec').innerText = `${fmt(elecStart)} ～ ${fmt(elecEnd)}`;
+        document.getElementById('res-build').innerText = `${fmt(buildStart)} ～ ${fmt(buildEnd)}`;
+        
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('placeholder').style.display = 'none';
+
+        // テキストサマリー作成
+        const summary = `【立会日】 ${fmt(deadlineDate)}\n【試運転】 ${fmt(testStart)} ～ ${fmt(testEnd)}\n【電気工事】 ${fmt(elecStart)} ～ ${fmt(elecEnd)}\n【組立】 ${fmt(buildStart)} ～ ${fmt(buildEnd)}`;
+        document.getElementById('textSummary').value = summary;
+        computedData.summary = summary;
+
+        generateExcelData(buildStart, deadlineDate, {
+            bS: buildStart, bE: buildEnd, eS: elecStart, eE: elecEnd, tS: testStart, tE: testEnd
+        });
+    }
+
+    function generateExcelData(rangeStart, rangeEnd, r) {
+        let current = new Date(rangeStart);
+        let output = [];
+        const useEmptyLabel = document.getElementById('showEmptyLabel').checked;
+        while (current <= rangeEnd) {
+            let label = "";
+            if (isWorkDay(current)) {
+                const cStr = formatDateStr(current);
+                if (cStr >= formatDateStr(r.bS) && cStr <= formatDateStr(r.bE)) label = "組";
+                else if (cStr >= formatDateStr(r.eS) && cStr <= formatDateStr(r.eE)) label = "電";
+                else if (cStr >= formatDateStr(r.tS) && cStr <= formatDateStr(r.tE)) label = "試";
+                else label = useEmptyLabel ? "空" : "";
+            }
+            output.push(label);
+            current.setDate(current.getDate() + 1);
+        }
+        computedData.dayMap = output;
+    }
+
+    function copyExcelData() {
+        navigator.clipboard.writeText(computedData.dayMap.join('\t')).then(() => alert("Excel用データをコピーしました。"));
+    }
+
+    function copyTextSummary() {
+        navigator.clipboard.writeText(computedData.summary).then(() => alert("結果テキストをコピーしました。"));
+    }
+</script>
+
 </body>
 </html>
